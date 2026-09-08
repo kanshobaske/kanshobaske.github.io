@@ -1,0 +1,3 @@
+git add .
+git commit -m "修正内容を記入"
+git push origin main
