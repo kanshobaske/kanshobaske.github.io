@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>諌早商業高校バスケットボール部</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="school-name">諫早商業高等学校</span>
+      <span class="club-name">男子バスケットボール部</span>
+    </div>
+    
+    <nav>
+      <a href="バスケindex.html">HOME</a>
+      <a href="news.html">ニュース</a>
+      <a href="basketballschedule.html">大会予定</a>
+      <a href="sinrosaki.html">進路先</a>
+      <a href="isahayashougyounituite.html">諫早商業高校について</a>
+      <a href="#access">アクセス</a>
+    </nav>
+  </header>
+
+<section class="hero">
+    <div class="hero-content">
+      <h1><img src="img/kenshu.png" alt="堅守速攻" class="hero-logo"></h1>
+      <div class="hero-text">
+        <p>諫早商業高校男子バスケットボール部</p>
+      </div>
+    </div>
+</section>
+
+<section>
+  <h2 class="section-title">NEWS</h2>
+  <p class="sub-title">新着情報</p>
+
+  <div class="news-container" id="top-news-list"></div>
+  <div class="more-link-wrap">
+    <a href="news.html" class="more-btn">もっと見る ＞</a>
+  </div>
+</section>
+
+<script src="news-data.js"></script>
+<script>
+  // 最新の3件を切り取って表示する処理
+  const topNewsList = document.getElementById("top-news-list");
+  
+  // news-data.js から最初の3件を取得
+  const latestNews = newsData.slice(0, 3);
+
+  latestNews.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <span class="news-date">${item.date}</span>
+      <div class="card-content">
+        <h3>${item.title}</h3>
+        <p>${item.desc || ""}</p>
+      </div>
+    `;
+    topNewsList.appendChild(card);
+  });
+</script>
+
+<section>
+    <h2 class="section-title">SCHEDULE</h2>
+    <p class="sub-title">今後の予定</p>
+
+    <div class="schedule-table-wrapper">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>大会・種別</th>
+            <th>対戦相手</th>
+          </tr>
+        </thead>
+        <tbody id="top-schedule-list">
+          </tbody>
+      </table>
+    </div>
+
+    <!-- ▼▼▼ ここに「もっと見る」ボタンを追加しました ▼▼▼ -->
+    <div class="more-link-wrap">
+      <a href="basketballschedule.html" class="more-btn">大会予定をもっと見る ＞</a>
+    </div>
+    <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
+</section>
+
+<script src="schedule-data.js"></script>
+<script>
+    // schedule-data.jsからデータを取得してテーブルを組み立てる
+    const topScheduleList = document.getElementById("top-schedule-list");
+
+    scheduleData.forEach(item => {
+      const tr = document.createElement("tr");
+      
+      // バッジのスタイル（公式戦は赤文字、練習試合は青文字など見やすく調整）
+      const badgeClass = item.badgeType === "official-game" ? "color: rgb(255, 101, 101); font-weight: bold;" : "color: #4aa3ff; font-weight: bold;";
+
+      tr.innerHTML = `
+        <td>${item.date} (${item.dayOfWeek})</td>
+        <td><span style="${badgeClass}">[${item.badgeName}]</span> ${item.title}</td>
+        <td>${item.opponent}</td>
+      `;
+      topScheduleList.appendChild(tr);
+    });
+</script>
+
+<section id="access">
+    <h2 class="section-title">ACCESS</h2>
+    <p class="sub-title">アクセス</p>
+
+    <div class="address-box">
+      <h3>長崎県立諫早商業高等学校</h3>
+      <p class="zip">〒854-0053</p>
+      <p class="address">長崎県諫早市宇都町8番1号</p>
+      <p class="tel">TEL: 0957-22-0254</p>
+    </div>
+
+    <div class="map-wrap">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1675.9515657034412!2d130.0395649679837!3d32.84781639469504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3540033435775e51%3A0xff0b2122ed82999e!2z6ZW35bSO55yM56uL6Kur5pep5ZWG5qWt6auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1784007157458!5m2!1sja!2sjp" width="1000" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 諫早商業高校バスケットボール部</p>
+</footer>
+
+</body>
+</html>

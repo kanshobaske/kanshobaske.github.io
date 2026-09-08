@@ -1,0 +1,617 @@
+@charset "UTF-8";
+
+/* =========================================
+   全体・共通設定
+========================================= */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans JP', "Yu Gothic", sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+#access {
+    scroll-margin-top: 80px; /* 固定ヘッダーの高さ分だけ上部に余白を確保 */
+}
+body{
+    color: #333;
+    line-height: 1.6;
+    background-color: #ffffff;
+    /* バスケットコートを連想させる背景 */
+    background-image: 
+        radial-gradient(circle at 50% 100%, rgba(255, 102, 102, 0.03) 0%, rgba(255, 102, 102, 0) 40%),
+        radial-gradient(circle at 0% 0%, rgba(255, 102, 102, 0.02) 0%, rgba(255, 102, 102, 0) 50%),
+        linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    background-attachment: fixed;
+}
+
+.container,
+.news-container,
+.players,
+.schedule-table-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+section {
+    padding: 80px 20px;
+}
+
+.section-title {
+    text-align: center;
+    color: rgb(255, 101, 101);
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.sub-title {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 50px;
+}
+
+/* =========================================
+   ヘッダー (Header) & ナビゲーション
+========================================= */
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    border-bottom: 3px solid rgb(255, 101, 101);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: rgb(255, 101, 101);
+    line-height: 1.2;
+}
+
+.school-name {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    letter-spacing: 0.5px;
+}
+
+.club-name {
+    display: block;
+    font-size: 22px;
+}
+
+nav{
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    padding: 10px 0;
+}
+
+nav a{
+    display: inline-block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: #333;
+    font-weight: 700;
+    font-size: 17px;
+    transition: 0.3s;
+}
+
+nav a:hover,
+.active-page{
+    color: rgb(255, 101, 101) !important;
+}
+
+/* =========================================
+   ヒーローエリア (Hero / HOME)
+========================================= */
+.hero{
+    height: 80vh;
+    background:
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)),
+        url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1400&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.hero-text{
+    color: #ffffff;
+    max-width: 800px;
+}
+
+.hero-content h1{
+    margin-bottom: 25px;
+}
+
+.hero-logo {
+    max-width: 100%;  
+    width: 680px;     
+    height: auto;     
+}
+
+.hero-content p{
+    font-size: 22px;
+    margin-bottom: 35px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   トップページ用 ニュースカード
+========================================= */
+.news-container {
+    display: flex;
+    flex-direction: column; 
+    gap: 20px;              
+}
+
+.card {
+    background: #ffffff;
+    padding: 22px 25px;
+    border-radius: 10px;
+    border: 1px solid #eaeaea; 
+    display: flex;             
+    align-items: flex-start;
+    transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.card:hover {
+    transform: translateX(5px); 
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.news-date {
+    font-size: 15px;
+    color: #888;
+    font-weight: 700;
+    min-width: 120px; 
+    padding-top: 2px;
+}
+
+.card-content { flex: 1; }
+.card-content h3 {
+    color: rgb(255, 101, 101);
+    margin-bottom: 6px;
+    font-size: 19px;
+    font-weight: 700;
+}
+.card-content p {
+    color: #444;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* =========================================
+   ニュース詳細ページ用 (news.html)
+========================================= */
+.news-page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 70vh;
+}
+
+.news-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.news-list li {
+    border-left: 5px solid rgb(255, 101, 101);
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid #eaeaea;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 0 10px 10px 0;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.news-list .news-date {
+    font-weight: bold;
+    color: rgb(255, 101, 101);
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.news-list a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.news-list a:hover {
+    color: rgb(255, 101, 101);
+    padding-left: 5px;
+}
+
+/* =========================================
+   スケジュール＆カレンダー (basketballschedule.html)
+========================================= */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.schedule-card, 
+.calendar-section {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02); 
+    border: 1px solid #eaeaea;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.schedule-card {
+    border-left: 5px solid #ff6666;
+    scroll-margin-top: 120px; 
+    transition: background-color 0.5s ease, opacity 0.8s, transform 0.8s;
+}
+
+.schedule-card.highlight-flash {
+    background-color: #fff0f0;
+    border-color: #ff3333;
+    box-shadow: 0 4px 20px rgba(255, 102, 102, 0.15);
+}
+
+.is-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.schedule-date {
+    color: #ff6666;
+    font-size: 20px;
+    font-weight: 700;
+}
+.schedule-date span { font-size: 15px; margin-left: 2px; }
+
+.badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.official-game { background: #ff6666; }
+.practice-game { background: #4aa3ff; }
+
+.schedule-name {
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.schedule-detail dl {
+    display: grid;
+    grid-template-columns: 90px auto;
+    row-gap: 8px;
+    font-size: 16px;
+}
+.schedule-detail dt { font-weight: bold; color: #666; }
+.schedule-comment { margin-top: 15px; color: #555; font-size: 15px; }
+
+/* 簡易テーブル版スケジュール */
+.schedule-table-wrapper { overflow-x: auto; }
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eaeaea;
+}
+.schedule-table th, .schedule-table td {
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+}
+.schedule-table th {
+    background: rgb(255, 101, 101);
+    color: #ffffff;
+    font-weight: bold;
+}
+.schedule-table td { border-bottom: 1px solid #eee; }
+
+/* カレンダー機能 */
+.calendar-section { margin-top: 50px; border-top: 5px solid #ff6666; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.calendar-title { font-size: 24px; color: #333; font-weight: 700; }
+.calendar-btn {
+    background: #ffffff; color: #ff6666; border: 1px solid #ffcccc;
+    padding: 9px 18px; font-size: 14px; font-weight: 700; border-radius: 30px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+}
+.calendar-btn:hover { background: #ff6666; color: #ffffff; border-color: #ff6666; }
+
+.calendar-slider-container { width: 100%; position: relative; overflow: hidden; }
+.calendar-slider-track { display: flex; width: 300%; transform: translateX(-33.3333%); }
+.is-animating { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.calendar-wrapper { width: 33.3333%; flex-shrink: 0; padding: 0 5px; }
+
+.calendar-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.calendar-table th { padding: 12px 0; background: #f7f7f7; font-weight: 700; color: #333; font-size: 14px; }
+.calendar-table th:first-child, .calendar-table td:first-child { color: #ff6666; } 
+.calendar-table th:last-child, .calendar-table td:last-child { color: #4aa3ff; }  
+.calendar-table td { padding: 8px 4px; border-bottom: 1px solid #eee; font-weight: 500; height: 95px; vertical-align: top; position: relative; }
+
+.day-num { display: block; font-size: 15px; margin-bottom: 5px; }
+.event-wrapper { position: absolute; bottom: 8px; left: 4px; right: 4px; }
+.event-dot {
+    display: block; padding: 3px 4px; font-size: 12px; color: #fff;
+    border-radius: 3px; font-weight: bold; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; cursor: pointer; border: none; width: 100%; text-align: center; transition: 0.2s;
+}
+.event-dot:hover { transform: scale(1.03); }
+.event-dot.official { background: #ff6666; }
+.event-dot.practice { background: #4aa3ff; }
+.other-month { color: #ccc !important; }
+
+
+/* =========================================
+   学校について (isahayashougyounituite.html)
+========================================= */
+.about-section {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    margin-bottom: 40px;
+    border-left: 5px solid #ff6666;
+    border-top: 1px solid #eaeaea;
+    border-right: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.about-section h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #fff0f0;
+    padding-bottom: 8px;
+}
+
+.about-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.grid-item {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.grid-item h4 {
+    color: #ff6666;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* =========================================
+   進路先ページ (sinrosaki.html)
+========================================= */
+.career-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.career-card {
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid #eaeaea;
+}
+
+.career-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.career-list {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.8;
+    font-size: 1rem;
+    color: #444;
+}
+.career-list li { margin-bottom: 8px; }
+
+/* 進路先の色分け */
+.card-university { background-color: #fcfdfe; border-left: 6px solid #2196f3; }
+.card-university h3 { color: #1e88e5; }
+.card-vocational { background-color: #fffbfd; border-left: 6px solid #e91e63; }
+.card-vocational h3 { color: #d81b60; }
+.card-employment { background-color: #fbfdfb; border-left: 6px solid #4caf50; }
+.card-employment h3 { color: #43a047; }
+
+
+/* =========================================
+   フッター (Footer)
+========================================= */
+footer{
+    margin-top: 80px;
+    text-align: center;
+    padding: 40px 20px;
+    background: #ffffff;
+    border-top: 3px solid rgb(255, 101, 101);
+    color: #777;
+    font-size: 15px;
+} 
+
+/* =========================================
+   レスポンシブ (スマホ表示)
+========================================= */
+@media(max-width:768px){
+    header{ flex-direction: column; padding: 15px 20px; }
+    nav{ margin-top: 15px; gap: 15px; flex-wrap: wrap; justify-content: center; padding: 5px 0; }
+    nav a{ font-size: 16px; padding: 5px 0; }
+    
+    .hero { height: 60vh; }
+    .hero-logo { width: 95%; }
+    .hero-content p{ font-size: 18px; margin-bottom: 25px; }
+
+    section { padding: 60px 20px; }
+    .section-title { font-size: 32px; }
+    .sub-title { margin-bottom: 40px; }
+
+    /* 各種カードの縦並び・余白調整 */
+    .card { flex-direction: column; gap: 8px; padding: 15px; }
+    .news-date { min-width: auto; font-size: 14px; }
+    .card-content h3 { font-size: 18px; }
+    .card-content p { font-size: 15px; }
+
+    .about-section { padding: 25px 20px; }
+
+    /* カレンダー縮小 */
+    .calendar-table td { height: 80px; }
+    .day-num { font-size: 13px; }
+    .event-dot { font-size: 10px; padding: 2px; }
+}
+/* =========================================
+   アクセス（住所枠 ＆ マップ中央寄せ）
+========================================= */
+/* 住所を表示するデザイン枠 */
+.address-box {
+    max-width: 600px;
+    margin: 0 auto 20px;     /* 下の余白を 30px から 20px に少し縮小 */
+    padding: 12px 20px;      /* 上下パディングを 25px から 12px に縮小 */
+    background: #ffffff;
+    border: 2px solid #ffcccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    text-align: center;
+}
+
+.address-box h3 {
+    color: rgb(255, 101, 101);
+    font-size: 18px;          /* フォントサイズを微調整 */
+    font-weight: 900;
+    margin-bottom: 6px;       /* 下余白を 12px から 6px に縮小 */
+    letter-spacing: 1px;
+}
+
+.address-box p {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 2px;       /* 行間を詰めるため 2px に変更 */
+    font-weight: 700;
+}
+
+
+
+/* マップを真ん中に寄せるスタイル */
+.map-wrap {
+    display: flex;
+    justify-content: center; /* 横方向の中央に配置 */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 10px;         /* スマホで見たときに画面端にぴったりくっつかないよう余白を確保 */
+}
+
+.map-wrap iframe {
+    width: 100%;
+    max-width: 1000px;        /* 住所枠と同じ最大横幅に設定 */
+    height: 600px;
+    border: 0;
+    border-radius: 12px;     /* 角を少し丸くして柔らかい印象に */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* 軽い影をつけてオシャレに浮き立たせる */
+    transition: 0.3s;
+}
+
+/* レスポンシブ (スマホ表示の微調整) */
+@media(max-width:768px){
+    .address-box {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    .address-box h3 {
+        font-size: 18px;
+    }
+    .address-box p {
+        font-size: 14px;
+    }
+    .map-wrap iframe {
+        height: 300px;       /* スマホ画面に合わせてマップの高さを少し低く調整 */
+    }
+}
+/* 「もっと見る」ボタンのコンテナ（中央揃え用） */
+.more-link-wrap {
+  text-align: center;
+  margin-top: 30px; /* ニュース一覧との余白 */
+}
+
+/* ボタン本体のデザイン */
+.more-btn {
+  display: inline-block;
+  padding: 12px 40px;
+  background-color: #333;     /* ボタンの背景色（お好みで変更可） */
+  color: #fff;                /* 文字色 */
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 30px;        /* 丸みのあるボタンにする場合 */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* マウスを乗せたとき（ホバー時）の動き */
+.more-btn:hover {
+  background-color: rgb(255, 101, 101); /* ホバー時にテーマカラー等へ変化 */
+  transform: translateY(-2px);           /* わずかに上に浮き上がる演出 */
+}

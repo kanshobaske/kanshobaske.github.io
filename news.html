@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ニュース一覧 | 諫早商業高校バスケットボール部</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="school-name">諫早商業高等学校</span>
+      <span class="club-name">男子バスケットボール部</span>
+    </div>
+    
+    <nav>
+      <a href="バスケindex.html">HOME</a>
+      <a href="news.html" style="color:rgb(255, 101, 101);">ニュース</a>
+      <a href="basketballschedule.html">大会予定</a>
+      <a href="sinrosaki.html">進路先</a>
+      <a href="isahayashougyounituite.html">諫早商業高校について</a>
+    </nav>
+  </header>
+
+  <section class="news-page-content">
+    <h2 class="section-title">NEWS</h2>
+
+    <ul class="news-list" id="news-container"></ul>
+  </section>
+
+  <footer>
+    <p>© 2026 諫早商業高校バスケットボール部</p>
+  </footer>
+
+  <script src="news-data.js"></script>
+  <script>
+    // ニュース一覧に全件表示する処理
+    const newsContainer = document.getElementById("news-container");
+
+    newsData.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="news-date">${item.date}</div>
+        <a href="#">${item.title}</a>
+      `;
+      newsContainer.appendChild(li);
+    });
+  </script>
+
+</body>
+</html>

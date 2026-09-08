@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大会予定 - 諫早商業高校バスケットボール部</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- 外部CSS（バスケスケジュール.css）の読み込み設定 -->
+<link rel="stylesheet" href="style.css">
+
+<!-- フィルターおよび今日の日付マーク用のスタイル -->
+<style>
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+.filter-btn {
+    padding: 8px 20px;
+    border: 2px solid #002b5c;
+    background: #fff;
+    color: #002b5c;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.filter-btn.active, .filter-btn:hover {
+    background: #002b5c;
+    color: #fff;
+}
+.schedule-card.filtered-out {
+    display: none !important;
+}
+
+/* 今日（開いた日）の丸マーク用スタイル */
+.calendar-table td.is-today .day-num {
+    position: relative;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+}
+.calendar-table td.is-today .day-num::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ff4757; /* 〇の枠線の色（赤色） */
+    border-radius: 50%;
+    z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">
+<span class="school-name">諫早商業高等学校</span>
+<span class="club-name">男子バスケットボール部</span>
+</div>
+<nav>
+<a href="バスケindex.html">HOME</a>
+<a href="news.html">ニュース</a>
+<a href="basketballschedule.html" class="active-page">大会予定</a>
+<a href="sinrosaki.html">進路先</a>
+<a href="isahayashougyounituite.html">諫早商業高校について</a>
+</nav>
+</header>
+
+<main>
+<section class="schedule-section">
+<div class="container">
+
+<h2 class="section-title">SCHEDULE</h2>
+<p class="sub-title">2026年度 試合・大会スケジュール</p>
+
+<!-- 絞り込みフィルターボタン -->
+<div class="filter-container">
+    <button class="filter-btn active" data-filter="all">すべて</button>
+    <button class="filter-btn" data-filter="official">公式戦</button>
+    <button class="filter-btn" data-filter="practice">練習試合</button>
+</div>
+
+<!-- スケジュールカード一覧 -->
+<div class="schedule-list">
+
+<div class="schedule-card" id="card-2026-05-30" data-date="2026-05-30" data-type="official" data-name="IH地区予選">
+<div class="card-header">
+<span class="schedule-date">2026年5月30日 <span>（土）</span></span>
+<span class="badge official-game">公式戦</span>
+</div>
+<h3 class="schedule-name">インターハイ地区予選</h3>
+<div class="schedule-detail">
+<dl>
+<dt>対戦相手</dt><dd>△△高校</dd>
+<dt>会場</dt><dd>〇〇市総合体育館</dd>
+</dl>
+<p class="schedule-comment">新チーム初の公式戦です。一戦必勝で頑張ります！</p>
+</div>
+</div>
+
+<div class="schedule-card" id="card-2026-06-02" data-date="2026-06-02" data-type="practice" data-name="練習試合">
+<div class="card-header">
+<span class="schedule-date">2026年6月2日 <span>（火）</span></span>
+<span class="badge practice-game">練習試合</span>
+</div>
+<h3 class="schedule-name">練習試合</h3>
+<div class="schedule-detail">
+<dl>
+<dt>対戦相手</dt><dd>〇〇学院高校</dd>
+<dt>会場</dt><dd>諫早商業高校体育館（ホーム）</dd>
+</dl>
+</div>
+</div>
+
+<div class="schedule-card" id="card-2026-06-10" data-date="2026-06-10" data-type="official" data-name="県高総体">
+<div class="card-header">
+<span class="schedule-date">2026年6月10日 <span>（水）</span></span>
+<span class="badge official-game">公式戦</span>
+</div>
+<h3 class="schedule-name">長崎県高等学校総合体育大会（県高総体）</h3>
+<div class="schedule-detail">
+<dl>
+<dt>対戦相手</dt><dd>未定（組み合わせ決定次第更新）</dd>
+<dt>会場</dt><dd>県営野球場周辺体育館</dd>
+</dl>
+</div>
+</div>
+
+</div><!-- /.schedule-list -->
+
+<!-- カレンダーセクション -->
+<div class="calendar-section">
+    <div class="calendar-header">
+        <button class="calendar-btn" id="prev-btn" aria-label="先月のカレンダーを表示"><span>←</span> 先月</button>
+        <h3 class="calendar-title" id="calendar-title">----年 --月</h3>
+        <button class="calendar-btn" id="next-btn" aria-label="次月のカレンダーを表示">次月 <span>→</span></button>
+    </div>
+    
+    <div class="calendar-slider-container">
+        <div class="calendar-slider-track" id="calendar-track">
+            <div class="calendar-wrapper" id="cal-prev-box"></div>
+            <div class="calendar-wrapper" id="cal-current-box"></div>
+            <div class="calendar-wrapper" id="cal-next-box"></div>
+        </div>
+    </div>
+</div>
+
+</div><!-- /.container -->
+</section>
+</main>
+
+<footer>
+<p>&copy; 2026 諫早商業高校 男子バスケットボール部</p>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    
+    const allEvents = {};
+    let currentFilter = "all";
+    
+    // カードから予定データを回収
+    document.querySelectorAll(".schedule-card").forEach(card => {
+        const dateStr = card.getAttribute("data-date");
+        if(dateStr) {
+            allEvents[dateStr] = {
+                type: card.getAttribute("data-type"),
+                name: card.getAttribute("data-name")
+            };
+        }
+    });
+
+    // フィルターに応じたイベントデータを返す関数
+    function getFilteredEvents() {
+        if (currentFilter === "all") return allEvents;
+        const filtered = {};
+        for (const [date, ev] of Object.entries(allEvents)) {
+            if (ev.type === currentFilter) {
+                filtered[date] = ev;
+            }
+        }
+        return filtered;
+    }
+
+    // 開いた日（今日）の月を初期表示にする
+    let today = new Date();
+    let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // フィルターボタンのクリック処理
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            currentFilter = this.getAttribute("data-filter");
+
+            document.querySelectorAll(".schedule-card").forEach(card => {
+                const type = card.getAttribute("data-type");
+                if (currentFilter === "all" || type === currentFilter) {
+                    card.classList.remove("filtered-out");
+                } else {
+                    card.classList.add("filtered-out");
+                }
+            });
+
+            setupSlider(currentDate);
+        });
+    });
+
+    // カレンダー内のバッジがクリックされた時の処理
+    document.addEventListener("click", function(e) {
+        if (e.target.classList.contains("event-dot")) {
+            const targetDate = e.target.getAttribute("data-goto");
+            const targetCard = document.getElementById(`card-${targetDate}`);
+            
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: "smooth", block: "start" });
+                targetCard.classList.add("highlight-flash");
+                setTimeout(() => {
+                    targetCard.classList.remove("highlight-flash");
+                }, 1500);
+            }
+        }
+    });
+
+    // 単一の月テーブルのHTMLを生成する関数
+    function createCalendarHTML(year, month) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        const prevLastDate = new Date(year, month, 0).getDate();
+        const activeEvents = getFilteredEvents();
+
+        const tYear = today.getFullYear();
+        const tMonth = today.getMonth();
+        const tDate = today.getDate();
+
+        let html = '<table class="calendar-table"><tbody>';
+        let dayCount = 1;
+        let nextMonthDayCount = 1;
+
+        for (let i = 0; i < 6; i++) {
+            if (dayCount > lastDate && i >= 4) break;
+            html += "<tr>";
+
+            for (let j = 0; j < 7; j++) {
+                let cellClass = "";
+                let printDay = "";
+                let fullDateStr = "";
+
+                if (i === 0 && j < firstDay) {
+                    printDay = prevLastDate - firstDay + j + 1;
+                    cellClass = "other-month";
+                } else if (dayCount > lastDate) {
+                    printDay = nextMonthDayCount++;
+                    cellClass = "other-month";
+                } else {
+                    printDay = dayCount;
+                    const mStr = String(month + 1).padStart(2, '0');
+                    const dStr = String(dayCount).padStart(2, '0');
+                    fullDateStr = `${year}-${mStr}-${dStr}`;
+                    
+                    // 今日（開いた日）の判定
+                    if (year === tYear && month === tMonth && printDay === tDate) {
+                        cellClass += " is-today";
+                    }
+                    
+                    dayCount++;
+                }
+
+                html += `<td class="${cellClass.trim()}"><span class="day-num">${printDay}</span>`;
+                
+                if (fullDateStr && activeEvents[fullDateStr]) {
+                    const ev = activeEvents[fullDateStr];
+                    html += `<div class="event-wrapper"><button class="event-dot ${ev.type}" data-goto="${fullDateStr}">${ev.name}</button></div>`;
+                }
+                html += "</td>";
+            }
+            html += "</tr>";
+        }
+        html += "</tbody></table>";
+        return html;
+    }
+
+    function setupSlider(baseDate) {
+        const year = baseDate.getFullYear();
+        const month = baseDate.getMonth();
+
+        document.getElementById("calendar-title").textContent = `${year}年 ${month + 1}月`;
+
+        const prevDate = new Date(year, month - 1, 1);
+        const nextDate = new Date(year, month + 1, 1);
+
+        document.getElementById("cal-prev-box").innerHTML = createCalendarHTML(prevDate.getFullYear(), prevDate.getMonth());
+        document.getElementById("cal-current-box").innerHTML = createCalendarHTML(year, month);
+        document.getElementById("cal-next-box").innerHTML = createCalendarHTML(nextDate.getFullYear(), nextDate.getMonth());
+    }
+
+    setupSlider(currentDate);
+
+    const track = document.getElementById("calendar-track");
+    let isTransitioning = false;
+
+    document.getElementById("prev-btn").addEventListener("click", function() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        track.classList.add("is-animating");
+        track.style.transform = "translateX(0%)";
+
+        setTimeout(() => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            track.classList.remove("is-animating");
+            track.style.transform = "translateX(-33.3333%)";
+            setupSlider(currentDate);
+            isTransitioning = false;
+        }, 400);
+    });
+
+    document.getElementById("next-btn").addEventListener("click", function() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        track.classList.add("is-animating");
+        track.style.transform = "translateX(-66.6666%)";
+
+        setTimeout(() => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            track.classList.remove("is-animating");
+            track.style.transform = "translateX(-33.3333%)";
+            setupSlider(currentDate);
+            isTransitioning = false;
+        }, 400);
+    });
+
+    const targets = document.querySelectorAll(".schedule-card, .calendar-section");
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("is-show");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        root: null,
+        rootMargin: "0px 0px -10% 0px",
+        threshold: 0
+    });
+
+    targets.forEach((target, index) => {
+        target.style.transitionDelay = `${index * 0.25}s`;
+        observer.observe(target);
+    });
+});
+</script>
+
+</body>
+</html>
