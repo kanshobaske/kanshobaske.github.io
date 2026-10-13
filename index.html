@@ -23,6 +23,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="news-gallery.css">
 </head>
 <body>
 
@@ -51,37 +52,34 @@
     </div>
 </section>
 
-<section>
-  <h2 class="section-title">NEWS</h2>
+<section aria-labelledby="news-heading">
+  <h2 class="section-title" id="news-heading">NEWS</h2>
   <p class="sub-title">新着情報</p>
-
-  <div class="news-container" id="top-news-list"></div>
+  <div class="news-container" id="top-news-list" aria-live="polite">
+    <p class="loading-message">ニュースを読み込んでいます…</p>
+  </div>
   <div class="more-link-wrap">
-    <a href="news.html" class="more-btn">もっと見る ＞</a>
+    <a href="news.html" class="more-btn">ニュースをすべて見る ＞</a>
+  </div>
+</section>
+
+<section aria-labelledby="gallery-heading" id="photo-gallery-preview">
+  <h2 class="section-title" id="gallery-heading">PHOTO GALLERY</h2>
+  <p class="sub-title">大会・練習の記録</p>
+  <p class="gallery-intro">大会や練習試合での様子を写真で紹介します。</p>
+  <div class="gallery-grid home-gallery-grid" id="top-gallery-list" aria-live="polite">
+    <p class="loading-message">写真を読み込んでいます…</p>
+  </div>
+  <div class="more-link-wrap">
+    <a href="gallery.html" class="more-btn">大会写真をもっと見る ＞</a>
   </div>
 </section>
 
 <script src="news-data.js"></script>
-<script>
-  // 最新の3件を切り取って表示する処理
-  const topNewsList = document.getElementById("top-news-list");
-  
-  // news-data.js から最初の3件を取得
-  const latestNews = newsData.slice(0, 3);
+<script src="news-renderer.js"></script>
+<script src="gallery-data.js"></script>
+<script src="gallery-renderer.js"></script>
 
-  latestNews.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <span class="news-date">${item.date}</span>
-      <div class="card-content">
-        <h3>${item.title}</h3>
-        <p>${item.desc || ""}</p>
-      </div>
-    `;
-    topNewsList.appendChild(card);
-  });
-</script>
 
 <section>
     <h2 class="section-title">SCHEDULE</h2>
@@ -110,22 +108,56 @@
 
 <script src="schedule-data.js"></script>
 <script>
-    // schedule-data.jsからデータを取得してテーブルを組み立てる
-    const topScheduleList = document.getElementById("top-schedule-list");
+  // 今後の予定のみを表示し、データに問題があってもページ全体が停止しないようにします。
+  (function () {
+    const tableBody = document.getElementById("top-schedule-list");
+    if (!tableBody) return;
 
-    scheduleData.forEach(item => {
-      const tr = document.createElement("tr");
-      
-      // バッジのスタイル（公式戦は赤文字、練習試合は青文字など見やすく調整）
-      const badgeClass = item.badgeType === "official-game" ? "color: rgb(255, 101, 101); font-weight: bold;" : "color: #4aa3ff; font-weight: bold;";
+    function showMessage(message) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 3;
+      cell.textContent = message;
+      row.appendChild(cell);
+      tableBody.appendChild(row);
+    }
 
-      tr.innerHTML = `
-        <td>${item.date} (${item.dayOfWeek})</td>
-        <td><span style="${badgeClass}">[${item.badgeName}]</span> ${item.title}</td>
-        <td>${item.opponent}</td>
-      `;
-      topScheduleList.appendChild(tr);
+    if (typeof scheduleData === "undefined" || !Array.isArray(scheduleData)) {
+      showMessage("予定を読み込めませんでした。時間をおいて再度ご確認ください。");
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const upcoming = scheduleData.filter(function (item) {
+      const normalized = String(item.fullDate || "").replace(/\./g, "-");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return true;
+      const eventDate = new Date(normalized + "T00:00:00");
+      return Number.isNaN(eventDate.getTime()) || eventDate >= today;
     });
+
+    if (upcoming.length === 0) {
+      showMessage("現在、掲載中の今後の予定はありません。");
+      return;
+    }
+
+    upcoming.forEach(function (item) {
+      const row = document.createElement("tr");
+      const dateCell = document.createElement("td");
+      const titleCell = document.createElement("td");
+      const opponentCell = document.createElement("td");
+      const badge = document.createElement("span");
+
+      dateCell.textContent = [item.date, item.dayOfWeek ? "(" + item.dayOfWeek + ")" : ""].filter(Boolean).join(" ");
+      badge.className = "schedule-inline-badge " + (item.badgeType === "official-game" ? "official" : "practice");
+      badge.textContent = "[" + (item.badgeName || "予定") + "]";
+      titleCell.appendChild(badge);
+      titleCell.appendChild(document.createTextNode(" " + (item.title || "詳細未定")));
+      opponentCell.textContent = item.opponent || "未定";
+      row.append(dateCell, titleCell, opponentCell);
+      tableBody.appendChild(row);
+    });
+  })();
 </script>
 
 <section id="access">
