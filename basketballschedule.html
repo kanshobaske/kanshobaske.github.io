@@ -189,6 +189,22 @@ document.addEventListener("DOMContentLoaded", function () {
         scheduleList.textContent = "大会予定を読み込めませんでした。";
     }
 
+    // カレンダー表示に必要な絞り込み関数と日付を初期化します。
+    // 前回の編集で抜けていたため、ここで定義してエラーを防ぎます。
+    function getFilteredEvents() {
+        if (currentFilter === "all") return allEvents;
+        const filtered = {};
+        Object.keys(allEvents).forEach(function (date) {
+            if (allEvents[date].type === currentFilter) {
+                filtered[date] = allEvents[date];
+            }
+        });
+        return filtered;
+    }
+
+    const today = new Date();
+    let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
     // フィルターボタンのクリック処理
     document.querySelectorAll(".filter-btn").forEach(btn => {
         btn.addEventListener("click", function() {
