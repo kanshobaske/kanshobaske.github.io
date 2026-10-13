@@ -31,7 +31,20 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <main>
 <h1 class="section-title">SITE MANAGER</h1><p class="sub-title">ニュース・大会予定・写真の編集</p>
 <p class="lead">フォームに入力して項目を追加・編集・削除できます。HTMLやJavaScriptを直接書き換える必要はありません。</p>
-<div class="notice"><strong>保存について：</strong>この画面だけでは公開サイトは変わりません。安全のためGitHubのパスワードやアクセストークンは入力しません。「データをコピー」→「GitHubで編集」→コードを貼り付け→「Commit changes」の順に保存してください。</div>
+<div class="notice">
+<strong>GitHubへ直接保存：</strong>下の設定で専用トークンを入力すると、この管理画面から変更内容を直接GitHubに保存できます。
+<div class="field" style="margin-top:14px">
+<label for="github-token">Fine-grained personal access token（GitHubトークン）</label>
+<input id="github-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
+</div>
+<div class="actions" style="margin-top:10px;margin-bottom:6px">
+<button type="button" class="btn" id="test-github-token">接続を確認</button>
+<button type="button" class="btn alt" id="clear-github-token">トークンを消す</button>
+<a class="btn alt" href="https://github.com/settings/personal-access-tokens/new?name=Basketball%20site%20admin&description=Save%20club%20website%20content&target_name=kanshobaske&expires_in=30&contents=write" target="_blank" rel="noopener">GitHubでトークンを作成</a>
+</div>
+<p id="github-token-status" class="help" aria-live="polite">トークンはこのページ内のメモリでのみ扱い、ブラウザ保存やサイトのファイルへの書き込みはしません。ページを再読み込みすると再入力が必要です。</p>
+<p class="help"><strong>必要な権限：</strong>対象リポジトリをこのサイトのリポジトリだけに限定し、Repository permissions の Contents を Read and write にしてください。有効期限は短め（例：30日）にしてください。</p>
+</div>
 <ol class="steps"><li>編集したい内容のタブを選び、フォームから追加・変更・削除します。</li><li>「データをコピー」を押し、GitHubの編集画面を開きます。</li><li>鉛筆マークから編集画面に入り、コード全体をコピーした内容に置き換えます。</li><li>「Commit changes」で保存します。公開サイトへの反映には少し時間がかかることがあります。</li></ol>
 <div class="tabs" role="tablist"><button class="tab active" data-tab="news" aria-selected="true">ニュース</button><button class="tab" data-tab="schedule" aria-selected="false">大会予定</button><button class="tab" data-tab="gallery" aria-selected="false">写真</button></div>
 
@@ -44,7 +57,7 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <div class="field full"><label for="n-desc">本文 *</label><textarea id="n-desc" maxlength="1200" required placeholder="大会結果や活動の様子などを入力"></textarea></div>
 <div class="field full"><div class="actions"><button class="btn" id="n-save" type="submit">ニュースを追加</button><button class="btn alt" id="n-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
 <h3>登録済みニュース</h3><div class="items" id="n-items"></div>
-<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="news">ニュースデータをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/news-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="news">ニュースデータをコピー</button><button class="btn" type="button" data-publish="news">GitHubに直接保存</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/news-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
 <textarea class="output" id="n-output" readonly aria-label="ニュースの更新用コード"></textarea><p class="help">GitHubの編集画面でコード全体を置き換えてください。</p>
 </section>
 
@@ -61,7 +74,7 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <div class="field full"><label for="s-comment">コメント・補足</label><textarea id="s-comment" maxlength="1200" placeholder="組み合わせや応援へのお知らせなど"></textarea></div>
 <div class="field full"><div class="actions"><button class="btn" id="s-save" type="submit">予定を追加</button><button class="btn alt" id="s-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
 <h3>登録済み予定</h3><div class="items" id="s-items"></div>
-<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="schedule">予定データをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/schedule-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="schedule">予定データをコピー</button><button class="btn" type="button" data-publish="schedule">GitHubに直接保存</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/schedule-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
 <textarea class="output" id="s-output" readonly aria-label="大会予定の更新用コード"></textarea><p class="help">ホームと大会予定ページの両方がこのファイルを読み込みます。</p>
 </section>
 
@@ -74,7 +87,7 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <div class="field full"><label for="g-desc">説明</label><textarea id="g-desc" maxlength="500" placeholder="写真の内容を入力"></textarea></div>
 <div class="field full"><div class="actions"><button class="btn" id="g-save" type="submit">写真情報を追加</button><button class="btn alt" id="g-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
 <h3>登録済み写真</h3><div class="items" id="g-items"></div>
-<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="gallery">写真データをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/gallery-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="gallery">写真データをコピー</button><button class="btn" type="button" data-publish="gallery">GitHubに直接保存</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/gallery-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
 <textarea class="output" id="g-output" readonly aria-label="写真情報の更新用コード"></textarea><p class="help">部員の顔が写った写真は学校のルールや本人・保護者の許可を確認してから公開してください。</p>
 </section>
 <p class="status" id="status" aria-live="polite"></p><p class="back"><a class="inline-link" href="index.html">← ホームに戻る</a></p>
@@ -138,6 +151,89 @@ refreshOutputs();const text=$(ids[type]).value;
 try{await navigator.clipboard.writeText(text);say(files[type]+" のコードをコピーしました。GitHubで編集して貼り付けてください。");}
 catch(e){$(ids[type]).focus();$(ids[type]).select();say("コード欄を選択しました。Ctrl+Cでコピーしてください。");}
 }
+const repositoryOwner="kanshobaske";
+const repositoryName="kanshobaske.github.io";
+const branchName="main";
+const publishTargets={
+ news:{path:"news-data.js",output:"n-output",label:"ニュース"},
+ schedule:{path:"schedule-data.js",output:"s-output",label:"大会予定"},
+ gallery:{path:"gallery-data.js",output:"g-output",label:"大会写真"}
+};
+function tokenValue(){return $("github-token").value.trim();}
+async function githubApi(path,options){
+ const token=tokenValue();
+ if(!token) throw new Error("GitHubトークンを入力してください。");
+ const response=await fetch("https://api.github.com/repos/"+repositoryOwner+"/"+repositoryName+"/contents/"+path,{
+  method:options&&options.method?options.method:"GET",
+  headers:{
+   "Accept":"application/vnd.github+json",
+   "Authorization":"Bearer "+token,
+   "X-GitHub-Api-Version":"2022-11-28",
+   "Content-Type":"application/json"
+  },
+  body:options&&options.body?JSON.stringify(options.body):undefined
+ });
+ let data={};
+ try{data=await response.json();}catch(e){}
+ if(!response.ok){
+  if(response.status===401) throw new Error("認証に失敗しました。トークンが正しいか、有効期限が切れていないか確認してください。");
+  if(response.status===403) throw new Error("保存権限がありません。対象リポジトリと Contents: Read and write の設定を確認してください。");
+  if(response.status===404) throw new Error("リポジトリまたはファイルにアクセスできません。トークンの対象リポジトリ設定を確認してください。");
+  if(response.status===409||response.status===422) throw new Error("GitHub側で競合が起きました。管理画面を再読み込みしてから、もう一度お試しください。");
+  throw new Error(data.message||("GitHub APIエラー（"+response.status+"）"));
+ }
+ return data;
+}
+$("test-github-token").addEventListener("click",async function(){
+ const button=this;
+ button.disabled=true;
+ $("github-token-status").textContent="GitHubへの接続を確認しています…";
+ try{
+  await githubApi("news-data.js");
+  $("github-token-status").textContent="GitHubに接続できました。直接保存を使えます。";
+  say("接続を確認しました。各項目の「GitHubに直接保存」を押すと変更が公開用リポジトリに保存されます。");
+ }catch(error){
+  $("github-token-status").textContent=error.message;
+  say("接続を確認できませんでした。トークンと権限を確認してください。");
+ }finally{button.disabled=false;}
+});
+$("clear-github-token").addEventListener("click",function(){
+ $("github-token").value="";
+ $("github-token-status").textContent="トークンを消しました。ページを閉じるときもトークンは保存されません。";
+ say("管理画面からトークンを消しました。");
+});
+async function publishDirect(type){
+ const target=publishTargets[type];
+ if(!target)return;
+ if(!tokenValue()){say("最初にGitHubトークンを入力し、「接続を確認」を押してください。");$("github-token").focus();return;}
+ refreshOutputs();
+ const text=$(target.output).value;
+ const buttons=Array.from(document.querySelectorAll("[data-publish]"));
+ buttons.forEach(button=>button.disabled=true);
+ say(target.label+"をGitHubに保存しています…");
+ try{
+  // 現在のファイルSHAを取得してから更新します。固定パス以外には書き込みません。
+  const current=await githubApi(target.path);
+  const result=await githubApi(target.path,{
+   method:"PUT",
+   body:{
+    message:"Update "+target.label+" from site manager",
+    content:(function(value){
+      const bytes=new TextEncoder().encode(value);
+      let binary="";
+      for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    })(text),
+    sha:current.sha,
+    branch:branchName
+   }
+  });
+  say(target.label+"をGitHubに直接保存しました。コミット："+result.commit.sha.slice(0,7)+"。公開サイトに反映されるまで少し時間がかかる場合があります。");
+ }catch(error){
+  say("保存できませんでした："+error.message);
+ }finally{buttons.forEach(button=>button.disabled=false);}
+}
+document.querySelectorAll("[data-publish]").forEach(button=>button.addEventListener("click",()=>publishDirect(button.dataset.publish)));
 document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copy(b.dataset.copy));
 renderN();renderS();renderG();
 })();
