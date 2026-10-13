@@ -93,52 +93,7 @@
 </div>
 
 <!-- スケジュールカード一覧 -->
-<div class="schedule-list">
-    
-<div class="schedule-card" id="card-2026-05-30" data-date="2026-05-30" data-type="official" data-name="IH地区予選">
-<div class="card-header">
-<span class="schedule-date">2026年5月30日 <span>（土）</span></span>
-<span class="badge official-game">公式戦</span>
-</div>
-<h3 class="schedule-name">インターハイ地区予選</h3>
-<div class="schedule-detail">
-<dl>
-<dt>対戦相手</dt><dd>△△高校</dd>
-<dt>会場</dt><dd>〇〇市総合体育館</dd>
-</dl>
-<p class="schedule-comment">新チーム初の公式戦です。一戦必勝で頑張ります！</p>
-</div>
-</div>
-
-<div class="schedule-card" id="card-2026-06-02" data-date="2026-06-02" data-type="practice" data-name="練習試合">
-<div class="card-header">
-<span class="schedule-date">2026年6月2日 <span>（火）</span></span>
-<span class="badge practice-game">練習試合</span>
-</div>
-<h3 class="schedule-name">練習試合</h3>
-<div class="schedule-detail">
-<dl>
-<dt>対戦相手</dt><dd>〇〇学院高校</dd>
-<dt>会場</dt><dd>諫早商業高校体育館（ホーム）</dd>
-</dl>
-</div>
-</div>
-
-<div class="schedule-card" id="card-2026-06-10" data-date="2026-06-10" data-type="official" data-name="県高総体">
-<div class="card-header">
-<span class="schedule-date">2026年6月10日 <span>（水）</span></span>
-<span class="badge official-game">公式戦</span>
-</div>
-<h3 class="schedule-name">長崎県高等学校総合体育大会（県高総体）</h3>
-<div class="schedule-detail">
-<dl>
-<dt>対戦相手</dt><dd>未定（組み合わせ決定次第更新）</dd>
-<dt>会場</dt><dd>県営野球場周辺体育館</dd>
-</dl>
-</div>
-</div>
-
-</div><!-- /.schedule-list -->
+<div class="schedule-list" id="schedule-list"><p>大会予定を読み込んでいます…</p></div><!-- /.schedule-list -->
 
 <!-- カレンダーセクション -->
 <div class="calendar-section">
@@ -165,38 +120,74 @@
 <p>&copy; 2026 諫早商業高校 男子バスケットボール部</p>
 </footer>
 
+<script src="schedule-data.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    
     const allEvents = {};
     let currentFilter = "all";
-    
-    // カードから予定データを回収
-    document.querySelectorAll(".schedule-card").forEach(card => {
-        const dateStr = card.getAttribute("data-date");
-        if(dateStr) {
-            allEvents[dateStr] = {
-                type: card.getAttribute("data-type"),
-                name: card.getAttribute("data-name")
-            };
-        }
-    });
+    const scheduleList = document.getElementById("schedule-list");
 
-    // フィルターに応じたイベントデータを返す関数
-    function getFilteredEvents() {
-        if (currentFilter === "all") return allEvents;
-        const filtered = {};
-        for (const [date, ev] of Object.entries(allEvents)) {
-            if (ev.type === currentFilter) {
-                filtered[date] = ev;
-            }
-        }
-        return filtered;
+    // schedule-data.js を元に、予定カードを自動生成します。
+    function makeTextElement(tag, className, value) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        element.textContent = value || "";
+        return element;
     }
 
-    // 開いた日（今日）の月を初期表示にする
-    let today = new Date();
-    let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    if (typeof scheduleData !== "undefined" && Array.isArray(scheduleData)) {
+        scheduleList.replaceChildren();
+        scheduleData.slice().sort(function (a, b) {
+            return String(a.fullDate || "").localeCompare(String(b.fullDate || ""));
+        }).forEach(function (item) {
+            const normalizedDate = String(item.fullDate || "").replace(/\./g, "-");
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) return;
+
+            const isOfficial = item.badgeType === "official-game";
+            const type = isOfficial ? "official" : "practice";
+            const title = item.title || "予定";
+            const card = document.createElement("article");
+            card.className = "schedule-card";
+            card.id = "card-" + normalizedDate;
+            card.setAttribute("data-date", normalizedDate);
+            card.setAttribute("data-type", type);
+            card.setAttribute("data-name", title);
+
+            const header = document.createElement("div");
+            header.className = "card-header";
+            const dateLabel = document.createElement("span");
+            dateLabel.className = "schedule-date";
+            const dateObject = new Date(normalizedDate + "T12:00:00");
+            dateLabel.appendChild(document.createTextNode(
+                dateObject.getFullYear() + "年" + (dateObject.getMonth() + 1) + "月" + dateObject.getDate() + "日 "
+            ));
+            const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+            dateLabel.appendChild(makeTextElement("span", "", "（" + (item.dayOfWeek || weekdays[dateObject.getDay()]) + "）"));
+            const badge = makeTextElement("span", "badge " + (isOfficial ? "official-game" : "practice-game"), item.badgeName || (isOfficial ? "公式戦" : "練習試合"));
+            header.append(dateLabel, badge);
+            card.appendChild(header);
+            card.appendChild(makeTextElement("h3", "schedule-name", title));
+
+            const detail = document.createElement("div");
+            detail.className = "schedule-detail";
+            const dl = document.createElement("dl");
+            [["対戦相手", item.opponent || "未定"], ["時間", item.time || ""], ["会場", item.place || ""]].forEach(function (pair) {
+                if (!pair[1]) return;
+                dl.appendChild(makeTextElement("dt", "", pair[0]));
+                dl.appendChild(makeTextElement("dd", "", pair[1]));
+            });
+            detail.appendChild(dl);
+            if (item.comment) detail.appendChild(makeTextElement("p", "schedule-comment", item.comment));
+            card.appendChild(detail);
+            scheduleList.appendChild(card);
+            allEvents[normalizedDate] = { type: type, name: title };
+        });
+        if (!scheduleList.children.length) {
+            scheduleList.appendChild(makeTextElement("p", "", "登録されている大会予定はありません。"));
+        }
+    } else {
+        scheduleList.textContent = "大会予定を読み込めませんでした。";
+    }
 
     // フィルターボタンのクリック処理
     document.querySelectorAll(".filter-btn").forEach(btn => {
@@ -234,6 +225,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    // 予定名をHTMLとして誤って解釈しないようにエスケープします。
+    function escapeCalendarText(value) {
+        return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
 
     // 単一の月テーブルのHTMLを生成する関数
     function createCalendarHTML(year, month) {
@@ -283,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 if (fullDateStr && activeEvents[fullDateStr]) {
                     const ev = activeEvents[fullDateStr];
-                    html += `<div class="event-wrapper"><button class="event-dot ${ev.type}" data-goto="${fullDateStr}">${ev.name}</button></div>`;
+                    html += `<div class="event-wrapper"><button class="event-dot ${ev.type}" data-goto="${fullDateStr}">${escapeCalendarText(ev.name)}</button></div>`;
                 }
                 html += "</td>";
             }
