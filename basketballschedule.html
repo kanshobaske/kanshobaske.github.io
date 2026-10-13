@@ -1,3 +1,5 @@
+// スケジュール管理は100行目付近の　<!-- スケジュールカード一覧 -->　を変更
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -94,7 +96,25 @@
 
 <!-- スケジュールカード一覧 -->
 <div class="schedule-list">
-
+    
+// ↓変更例 []の部分を変更する ※「」は変更例
+    // <div class="schedule-card" id="card-[日付「2026-05-30 etc」]" data-date="[日付「2026-05-30 etc」]" data-type="official" data-name="[簡易内容「練習試合、新人大会 etc」]">
+    // <div class="card-header">
+    // <span class="schedule-date">[日付「2026年5月30日 etc」] <span>[曜日「（土）etc」]</span></span>
+    // <span class="badge official-game">公式戦</span>
+    // </div>
+    // <h3 class="schedule-name">インターハイ地区予選</h3>
+    // <div class="schedule-detail">
+    // <dl>
+    // <dt>対戦相手</dt><dd>△△高校</dd>
+    // <dt>会場</dt><dd>〇〇市総合体育館</dd>
+    // </dl>
+    // <p class="schedule-comment">[一言（なくてもいい）]</p>
+    // </div>
+    // </div>
+// ↑変更例    
+//　　↓ここから下を変更↓   
+    
 <div class="schedule-card" id="card-2026-05-30" data-date="2026-05-30" data-type="official" data-name="IH地区予選">
 <div class="card-header">
 <span class="schedule-date">2026年5月30日 <span>（土）</span></span>
