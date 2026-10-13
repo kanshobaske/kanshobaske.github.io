@@ -35,17 +35,5 @@ const scheduleData = [
     "time": "終日",
     "place": "県立総合体育館",
     "comment": "組み合わせが決まり次第、詳細を更新します。"
-  },
-  {
-    "date": "10/22",
-    "fullDate": "2026.10.22",
-    "dayOfWeek": "木",
-    "badgeType": "practice-game",
-    "badgeName": "練習試合",
-    "title": "ｓｓ",
-    "opponent": "ｄ",
-    "time": "ｄ",
-    "place": "",
-    "comment": ""
   }
 ];
