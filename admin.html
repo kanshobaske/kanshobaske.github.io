@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サイト管理・編集 | 諫早商業高校男子バスケットボール部</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;margin:0 auto 24px;text-align:center}
+.notice{padding:16px 19px;border:1px solid #ffd6d6;border-left:5px solid #ff6565;border-radius:8px;background:#fff8f8;color:#444;margin:22px 0}
+.steps{padding-left:1.5em;color:#444}.steps li{margin:7px 0}
+.tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:26px 0}
+.tab,.btn{font:inherit;font-weight:700;cursor:pointer;border:1px solid #ff6565;border-radius:7px;padding:10px 15px;background:#ff6565;color:white;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.tab{border-width:2px;border-radius:30px;background:#fff;color:#d95050}.tab.active{background:#ff6565;color:#fff}
+.panel{background:#fff;border:1px solid #eaeaea;border-left:5px solid #ff6565;border-radius:0 10px 10px 0;padding:23px;margin:20px 0;box-shadow:0 4px 15px #00000006}
+.panel[hidden]{display:none!important}.panel h2{font-size:1.4rem;margin-bottom:8px}.panel>p{color:#666;margin-bottom:18px}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-bottom:22px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}
+.field label{font-size:.93rem;font-weight:700}.field input,.field select,.field textarea{width:100%;font:inherit;border:1px solid #d7d7d7;border-radius:6px;padding:10px 12px;background:white;color:#333}.field textarea{min-height:85px;resize:vertical}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 20px}.btn.alt{background:white;color:#d95050}.btn.dark{background:#666;border-color:#666}
+.items{display:grid;gap:10px;margin:15px 0 24px}.item{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border:1px solid #eaeaea;border-radius:7px;padding:13px}.item-body{flex:1;min-width:0;overflow-wrap:anywhere}.item-body strong{display:block}.item-body small{display:block;color:#777;margin:4px 0}.item-body p{white-space:pre-wrap;color:#444;margin:4px 0}.item-actions{display:flex;gap:6px;flex-wrap:wrap}.small{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid #ddd;background:#fff;color:#444;border-radius:5px;padding:6px 10px}.empty,.help{color:#666;font-size:.92rem}.empty{text-align:center;border:1px dashed #ddd;border-radius:8px;padding:18px}
+.output-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:25px}.output{display:block;width:100%;min-height:160px;margin-top:10px;border:1px solid #ddd;border-radius:6px;background:#fafafa;padding:12px;font:13px/1.5 Consolas,monospace;white-space:pre;overflow:auto}.status{min-height:1.5em;color:#267547;font-weight:700}.back{text-align:center;margin-top:30px}
+@media(max-width:640px){main{padding:22px 12px 50px}.panel{padding:16px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.item{flex-direction:column}.item-actions{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="logo"><span class="school-name">諫早商業高等学校</span><span class="club-name">男子バスケットボール部</span></div>
+<nav><a href="index.html">HOME</a><a href="news.html">ニュース</a><a href="basketballschedule.html">大会予定</a><a href="gallery.html">大会写真</a></nav></header>
+<main>
+<h1 class="section-title">SITE MANAGER</h1><p class="sub-title">ニュース・大会予定・写真の編集</p>
+<p class="lead">フォームに入力して項目を追加・編集・削除できます。HTMLやJavaScriptを直接書き換える必要はありません。</p>
+<div class="notice"><strong>保存について：</strong>この画面だけでは公開サイトは変わりません。安全のためGitHubのパスワードやアクセストークンは入力しません。「データをコピー」→「GitHubで編集」→コードを貼り付け→「Commit changes」の順に保存してください。</div>
+<ol class="steps"><li>編集したい内容のタブを選び、フォームから追加・変更・削除します。</li><li>「データをコピー」を押し、GitHubの編集画面を開きます。</li><li>鉛筆マークから編集画面に入り、コード全体をコピーした内容に置き換えます。</li><li>「Commit changes」で保存します。公開サイトへの反映には少し時間がかかることがあります。</li></ol>
+<div class="tabs" role="tablist"><button class="tab active" data-tab="news" aria-selected="true">ニュース</button><button class="tab" data-tab="schedule" aria-selected="false">大会予定</button><button class="tab" data-tab="gallery" aria-selected="false">写真</button></div>
+
+<section class="panel" id="panel-news" role="tabpanel">
+<h2>ニュースを編集</h2><p>大会の予定・結果、活動報告、部員募集、連絡などを登録します。</p>
+<form id="form-news" class="form">
+<div class="field"><label for="n-date">日付 *</label><input id="n-date" type="date" required></div>
+<div class="field"><label for="n-category">分類 *</label><select id="n-category"><option>大会予定・結果</option><option>活動報告</option><option>部員募集</option><option>お知らせ</option><option>写真更新</option></select></div>
+<div class="field full"><label for="n-title">タイトル *</label><input id="n-title" maxlength="120" required placeholder="例：新人大会の結果"></div>
+<div class="field full"><label for="n-desc">本文 *</label><textarea id="n-desc" maxlength="1200" required placeholder="大会結果や活動の様子などを入力"></textarea></div>
+<div class="field full"><div class="actions"><button class="btn" id="n-save" type="submit">ニュースを追加</button><button class="btn alt" id="n-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
+<h3>登録済みニュース</h3><div class="items" id="n-items"></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="news">ニュースデータをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/news-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<textarea class="output" id="n-output" readonly aria-label="ニュースの更新用コード"></textarea><p class="help">GitHubの編集画面でコード全体を置き換えてください。</p>
+</section>
+
+<section class="panel" id="panel-schedule" role="tabpanel" hidden>
+<h2>大会予定を編集</h2><p>ホームの予定表と大会予定ページは同じデータを利用します。</p>
+<form id="form-s" class="form">
+<div class="field"><label for="s-date">開催日 *</label><input id="s-date" type="date" required></div>
+<div class="field"><label for="s-type">種別 *</label><select id="s-type"><option value="official-game">公式戦</option><option value="practice-game">練習試合</option></select></div>
+<div class="field"><label for="s-badge">表示ラベル *</label><input id="s-badge" required value="公式戦" placeholder="例：県大会"></div>
+<div class="field"><label for="s-title">大会・予定名 *</label><input id="s-title" maxlength="150" required placeholder="例：新人大会"></div>
+<div class="field"><label for="s-opponent">対戦相手</label><input id="s-opponent" maxlength="150" placeholder="例：〇〇高校／未定"></div>
+<div class="field"><label for="s-time">時間</label><input id="s-time" maxlength="100" placeholder="例：10:00 TIP OFF"></div>
+<div class="field full"><label for="s-place">会場</label><input id="s-place" maxlength="180" placeholder="例：諫早市中央体育館"></div>
+<div class="field full"><label for="s-comment">コメント・補足</label><textarea id="s-comment" maxlength="1200" placeholder="組み合わせや応援へのお知らせなど"></textarea></div>
+<div class="field full"><div class="actions"><button class="btn" id="s-save" type="submit">予定を追加</button><button class="btn alt" id="s-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
+<h3>登録済み予定</h3><div class="items" id="s-items"></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="schedule">予定データをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/schedule-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<textarea class="output" id="s-output" readonly aria-label="大会予定の更新用コード"></textarea><p class="help">ホームと大会予定ページの両方がこのファイルを読み込みます。</p>
+</section>
+
+<section class="panel" id="panel-gallery" role="tabpanel" hidden>
+<h2>大会写真を編集</h2><p>写真ファイル自体はGitHubの <code>img/gallery/</code> フォルダにアップロードしてから、そのパスをここに登録してください。</p>
+<form id="form-g" class="form">
+<div class="field full"><label for="g-src">写真のファイルパス *</label><input id="g-src" required placeholder="例：img/gallery/spring-tournament.jpg"></div>
+<div class="field"><label for="g-title">写真のタイトル *</label><input id="g-title" maxlength="120" required placeholder="例：春季大会"></div>
+<div class="field"><label for="g-date">撮影日・開催日</label><input id="g-date" type="date"></div>
+<div class="field full"><label for="g-desc">説明</label><textarea id="g-desc" maxlength="500" placeholder="写真の内容を入力"></textarea></div>
+<div class="field full"><div class="actions"><button class="btn" id="g-save" type="submit">写真情報を追加</button><button class="btn alt" id="g-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
+<h3>登録済み写真</h3><div class="items" id="g-items"></div>
+<div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="gallery">写真データをコピー</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/gallery-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
+<textarea class="output" id="g-output" readonly aria-label="写真情報の更新用コード"></textarea><p class="help">部員の顔が写った写真は学校のルールや本人・保護者の許可を確認してから公開してください。</p>
+</section>
+<p class="status" id="status" aria-live="polite"></p><p class="back"><a class="inline-link" href="index.html">← ホームに戻る</a></p>
+</main>
+<footer><p>© 2026 諫早商業高校バスケットボール部</p></footer>
+<script src="news-data.js"></script><script src="schedule-data.js"></script><script src="gallery-data.js"></script>
+<script>
+(function(){
+"use strict";
+let news=newsData.map(x=>({...x})), schedules=scheduleData.map(x=>({...x})), photos=galleryData.map(x=>({...x}));
+let editN=null,editS=null,editG=null;
+const $=id=>document.getElementById(id), status=$("status");
+const dot=v=>String(v||"").replace(/-/g,"."), inputDate=v=>String(v||"").replace(/\./g,"-").slice(0,10), display=v=>String(v||"").replace(/\./g,"/");
+const say=t=>status.textContent=t;
+const node=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
+function output(name,items,comment){return "// "+comment+"\nconst "+name+" = "+JSON.stringify(items,null,2)+";\n";}
+function refreshOutputs(){
+$("n-output").value=output("newsData",news.slice().sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date))),"ニュースデータ");
+$("s-output").value=output("scheduleData",schedules.slice().sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate))),"大会予定データ");
+$("g-output").value=output("galleryData",photos,"大会写真データ");
+}
+function itemRow(container,title,meta,desc,index,onEdit,onDelete){
+const row=node("div","item"),body=node("div","item-body"),actions=node("div","item-actions");
+body.append(node("strong","",title||"（タイトルなし）"));if(meta)body.append(node("small","",meta));if(desc)body.append(node("p","",desc));
+const edit=node("button","small","編集");edit.type="button";edit.onclick=()=>onEdit(index);
+const del=node("button","small","削除");del.type="button";del.onclick=()=>onDelete(index);
+actions.append(edit,del);row.append(body,actions);container.append(row);
+}
+function fillList(id,arr,make){
+const box=$(id);box.replaceChildren();if(!arr.length){box.append(node("p","empty","登録項目はありません。上のフォームから追加してください。"));return;}arr.forEach((x,i)=>make(box,x,i));
+}
+function resetN(){ $("form-news").reset();$("n-category").value="お知らせ";editN=null;$("n-save").textContent="ニュースを追加";$("n-cancel").hidden=true;}
+function renderN(){
+fillList("n-items",news,(box,x,i)=>itemRow(box,x.title,display(x.date)+" ・ "+(x.category||"お知らせ"),x.desc,i,index=>{const v=news[index];$("n-date").value=inputDate(v.date);$("n-category").value=v.category||"お知らせ";$("n-title").value=v.title;$("n-desc").value=v.desc;editN=index;$("n-save").textContent="変更を保存";$("n-cancel").hidden=false;$("form-news").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("このニュースを削除しますか？")){news.splice(index,1);resetN();renderN();say("ニュースを削除しました。GitHubへの保存も行ってください。");}}));
+refreshOutputs();
+}
+$("form-news").onsubmit=e=>{e.preventDefault();const item={date:dot($("n-date").value),category:$("n-category").value,title:$("n-title").value.trim(),desc:$("n-desc").value.trim()};if(!item.date||!item.title||!item.desc){say("日付・タイトル・本文を入力してください。");return;}if(editN===null)news.push(item);else news[editN]=item;news.sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date)));resetN();renderN();say("ニュースを管理画面に反映しました。公開するにはGitHubに保存してください。");};
+$("n-cancel").onclick=resetN;
+
+function resetS(){$("form-s").reset();$("s-type").value="official-game";$("s-badge").value="公式戦";editS=null;$("s-save").textContent="予定を追加";$("s-cancel").hidden=true;}
+$("s-type").onchange=()=>{if(editS===null)$("s-badge").value=$("s-type").value==="official-game"?"公式戦":"練習試合";};
+function renderS(){
+fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();say("予定を削除しました。GitHubへの保存も行ってください。");}}));
+refreshOutputs();
+}
+$("form-s").onsubmit=e=>{e.preventDefault();const raw=$("s-date").value,d=new Date(raw+"T12:00:00");if(!raw||Number.isNaN(d.getTime())){say("開催日を入力してください。");return;}const item={date:(d.getMonth()+1)+"/"+d.getDate(),fullDate:dot(raw),dayOfWeek:["日","月","火","水","木","金","土"][d.getDay()],badgeType:$("s-type").value,badgeName:$("s-badge").value.trim(),title:$("s-title").value.trim(),opponent:$("s-opponent").value.trim()||"未定",time:$("s-time").value.trim(),place:$("s-place").value.trim(),comment:$("s-comment").value.trim()};if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}if(editS===null)schedules.push(item);else schedules[editS]=item;schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));resetS();renderS();say("大会予定を管理画面に反映しました。公開するにはGitHubに保存してください。");};
+$("s-cancel").onclick=resetS;
+
+function resetG(){$("form-g").reset();editG=null;$("g-save").textContent="写真情報を追加";$("g-cancel").hidden=true;}
+function renderG(){
+fillList("g-items",photos,(box,x,i)=>itemRow(box,x.title,(x.src||"")+(x.date?" ・ "+display(x.date):""),x.description,i,index=>{const v=photos[index];$("g-src").value=v.src||"";$("g-title").value=v.title||"";$("g-date").value=inputDate(v.date);$("g-desc").value=v.description||"";editG=index;$("g-save").textContent="変更を保存";$("g-cancel").hidden=false;$("form-g").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("写真情報を削除しますか？写真ファイル自体はGitHubから別途削除してください。")){photos.splice(index,1);resetG();renderG();say("写真情報を削除しました。GitHubへの保存も行ってください。");}}));
+refreshOutputs();
+}
+$("form-g").onsubmit=e=>{e.preventDefault();const item={src:$("g-src").value.trim(),title:$("g-title").value.trim(),date:$("g-date").value?dot($("g-date").value):"",description:$("g-desc").value.trim()};if(!item.src||!item.title){say("ファイルパスと写真タイトルを入力してください。");return;}if(editG===null)photos.push(item);else photos[editG]=item;resetG();renderG();say("写真情報を管理画面に反映しました。画像ファイルもGitHubに追加されているか確認してください。");};
+$("g-cancel").onclick=resetG;
+
+document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{document.querySelectorAll(".tab").forEach(t=>{t.classList.toggle("active",t===tab);t.setAttribute("aria-selected",String(t===tab));});["news","schedule","gallery"].forEach(name=>{$("panel-"+name).hidden=name!==tab.dataset.tab;});say("");});
+async function copy(type){
+const ids={news:"n-output",schedule:"s-output",gallery:"g-output"},files={news:"news-data.js",schedule:"schedule-data.js",gallery:"gallery-data.js"};
+refreshOutputs();const text=$(ids[type]).value;
+try{await navigator.clipboard.writeText(text);say(files[type]+" のコードをコピーしました。GitHubで編集して貼り付けてください。");}
+catch(e){$(ids[type]).focus();$(ids[type]).select();say("コード欄を選択しました。Ctrl+Cでコピーしてください。");}
+}
+document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copy(b.dataset.copy));
+renderN();renderS();renderG();
+})();
+</script>
+</body>
+</html>
