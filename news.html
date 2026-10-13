@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
 
  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="news-gallery.css">
 </head>
 <body>
 
@@ -21,17 +22,36 @@
     
     <nav>
       <a href="index.html">HOME</a>
-      <a href="news.html" style="color:rgb(255, 101, 101);">ニュース</a>
+      <a href="news.html" class="active-page" aria-current="page">ニュース</a>
       <a href="basketballschedule.html">大会予定</a>
       <a href="sinrosaki.html">進路先</a>
       <a href="isahayashougyounituite.html">諫早商業高校について</a>
     </nav>
   </header>
 
-  <section class="news-page-content">
-    <h2 class="section-title">NEWS</h2>
+  <section class="news-page-content" aria-labelledby="news-heading">
+    <h1 class="section-title" id="news-heading">NEWS</h1>
+    <p class="sub-title">部活動のお知らせ・活動報告</p>
 
-    <ul class="news-list" id="news-container"></ul>
+    <div class="news-intro">
+      <h2>このページでお知らせすること</h2>
+      <p>バスケットボール部の活動を知ってもらうため、次の情報を掲載します。</p>
+      <ul>
+        <li><strong>大会の予定・結果：</strong>大会名、対戦相手、試合結果、次の試合のお知らせ</li>
+        <li><strong>活動報告：</strong>練習試合や日々の練習、遠征などの報告</li>
+        <li><strong>部員募集・連絡：</strong>体験入部、見学、行事などの案内</li>
+        <li><strong>写真の更新：</strong>大会・練習試合の写真を追加したお知らせ</li>
+      </ul>
+      <p class="news-intro-note">大会の日程一覧は「大会予定」、写真は「大会写真」にまとめ、ニュースでは更新内容と本文を紹介します。</p>
+      <p><a href="gallery.html" class="inline-link">大会写真を見る ＞</a>　<a href="basketballschedule.html" class="inline-link">大会予定を見る ＞</a></p>
+    </div>
+
+    <ul class="news-list" id="news-container" aria-live="polite">
+      <li class="loading-message">ニュースを読み込んでいます…</li>
+    </ul>
+    <div class="more-link-wrap">
+      <a href="index.html" class="more-btn">ホームに戻る ＞</a>
+    </div>
   </section>
 
   <footer>
@@ -39,19 +59,7 @@
   </footer>
 
   <script src="news-data.js"></script>
-  <script>
-    // ニュース一覧に全件表示する処理
-    const newsContainer = document.getElementById("news-container");
-
-    newsData.forEach(item => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <div class="news-date">${item.date}</div>
-        <a href="#">${item.title}</a>
-      `;
-      newsContainer.appendChild(li);
-    });
-  </script>
+<script src="news-renderer.js"></script>
 
 </body>
 </html>
