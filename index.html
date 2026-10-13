@@ -75,7 +75,7 @@
   </div>
 </section>
 
-<script src="news-data.js?v=20261013"></script>
+<script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 /* ニュース表示の予備処理：外部スクリプトが読み込めない場合でも、ニュース本文を表示します。 */
 (function () {
@@ -135,7 +135,7 @@
   }
 })();
 </script>
-<script src="gallery-data.js"></script>
+<script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script src="gallery-renderer.js"></script>
 
 
@@ -164,7 +164,7 @@
     <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
 </section>
 
-<script src="schedule-data.js"></script>
+<script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
   // 今後の予定のみを表示し、データに問題があってもページ全体が停止しないようにします。
   (function () {
