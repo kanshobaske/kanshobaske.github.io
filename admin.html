@@ -32,7 +32,7 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <h1 class="section-title">SITE MANAGER</h1><p class="sub-title">ニュース・大会予定・写真の編集</p>
 <p class="lead">フォームに入力して項目を追加・編集・削除できます。HTMLやJavaScriptを直接書き換える必要はありません。</p>
 <div class="notice">
-<strong>GitHubへ直接保存：</strong>下の設定で専用トークンを入力すると、この管理画面から変更内容を直接GitHubに保存できます。
+<strong>GitHubへ直接保存：</strong>下の設定で専用トークンを入力すると、追加・変更・削除の操作後に管理画面からGitHubへ自動保存します。
 <div class="field" style="margin-top:14px">
 <label for="github-token">Fine-grained personal access token（GitHubトークン）</label>
 <input id="github-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
@@ -93,7 +93,7 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <p class="status" id="status" aria-live="polite"></p><p class="back"><a class="inline-link" href="index.html">← ホームに戻る</a></p>
 </main>
 <footer><p>© 2026 諫早商業高校バスケットボール部</p></footer>
-<script src="news-data.js"></script><script src="schedule-data.js"></script><script src="gallery-data.js"></script>
+<script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script><script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script><script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 (function(){
 "use strict";
@@ -121,27 +121,27 @@ const box=$(id);box.replaceChildren();if(!arr.length){box.append(node("p","empty
 }
 function resetN(){ $("form-news").reset();$("n-category").value="お知らせ";editN=null;$("n-save").textContent="ニュースを追加";$("n-cancel").hidden=true;}
 function renderN(){
-fillList("n-items",news,(box,x,i)=>itemRow(box,x.title,display(x.date)+" ・ "+(x.category||"お知らせ"),x.desc,i,index=>{const v=news[index];$("n-date").value=inputDate(v.date);$("n-category").value=v.category||"お知らせ";$("n-title").value=v.title;$("n-desc").value=v.desc;editN=index;$("n-save").textContent="変更を保存";$("n-cancel").hidden=false;$("form-news").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("このニュースを削除しますか？")){news.splice(index,1);resetN();renderN();say("ニュースを削除しました。GitHubへの保存も行ってください。");}}));
+fillList("n-items",news,(box,x,i)=>itemRow(box,x.title,display(x.date)+" ・ "+(x.category||"お知らせ"),x.desc,i,index=>{const v=news[index];$("n-date").value=inputDate(v.date);$("n-category").value=v.category||"お知らせ";$("n-title").value=v.title;$("n-desc").value=v.desc;editN=index;$("n-save").textContent="変更を保存";$("n-cancel").hidden=false;$("form-news").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("このニュースを削除しますか？")){news.splice(index,1);resetN();renderN();if(tokenValue()) publishDirect("news"); else say("ニュースを管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
-$("form-news").onsubmit=e=>{e.preventDefault();const item={date:dot($("n-date").value),category:$("n-category").value,title:$("n-title").value.trim(),desc:$("n-desc").value.trim()};if(!item.date||!item.title||!item.desc){say("日付・タイトル・本文を入力してください。");return;}if(editN===null)news.push(item);else news[editN]=item;news.sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date)));resetN();renderN();say("ニュースを管理画面に反映しました。公開するにはGitHubに保存してください。");};
+$("form-news").onsubmit=e=>{e.preventDefault();const item={date:dot($("n-date").value),category:$("n-category").value,title:$("n-title").value.trim(),desc:$("n-desc").value.trim()};if(!item.date||!item.title||!item.desc){say("日付・タイトル・本文を入力してください。");return;}if(editN===null)news.push(item);else news[editN]=item;news.sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date)));resetN();renderN();if(tokenValue()) publishDirect("news"); else say("ニュースを編集しました。公開サイトに反映するには、GitHubトークンを設定して直接保存してください。");};
 $("n-cancel").onclick=resetN;
 
 function resetS(){$("form-s").reset();$("s-type").value="official-game";$("s-badge").value="公式戦";editS=null;$("s-save").textContent="予定を追加";$("s-cancel").hidden=true;}
 $("s-type").onchange=()=>{if(editS===null)$("s-badge").value=$("s-type").value==="official-game"?"公式戦":"練習試合";};
 function renderS(){
-fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();say("予定を削除しました。GitHubへの保存も行ってください。");}}));
+fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("予定を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
-$("form-s").onsubmit=e=>{e.preventDefault();const raw=$("s-date").value,d=new Date(raw+"T12:00:00");if(!raw||Number.isNaN(d.getTime())){say("開催日を入力してください。");return;}const item={date:(d.getMonth()+1)+"/"+d.getDate(),fullDate:dot(raw),dayOfWeek:["日","月","火","水","木","金","土"][d.getDay()],badgeType:$("s-type").value,badgeName:$("s-badge").value.trim(),title:$("s-title").value.trim(),opponent:$("s-opponent").value.trim()||"未定",time:$("s-time").value.trim(),place:$("s-place").value.trim(),comment:$("s-comment").value.trim()};if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}if(editS===null)schedules.push(item);else schedules[editS]=item;schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));resetS();renderS();say("大会予定を管理画面に反映しました。公開するにはGitHubに保存してください。");};
+$("form-s").onsubmit=e=>{e.preventDefault();const raw=$("s-date").value,d=new Date(raw+"T12:00:00");if(!raw||Number.isNaN(d.getTime())){say("開催日を入力してください。");return;}const item={date:(d.getMonth()+1)+"/"+d.getDate(),fullDate:dot(raw),dayOfWeek:["日","月","火","水","木","金","土"][d.getDay()],badgeType:$("s-type").value,badgeName:$("s-badge").value.trim(),title:$("s-title").value.trim(),opponent:$("s-opponent").value.trim()||"未定",time:$("s-time").value.trim(),place:$("s-place").value.trim(),comment:$("s-comment").value.trim()};if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}if(editS===null)schedules.push(item);else schedules[editS]=item;schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("大会予定を編集しました。公開サイトに反映するには、GitHubトークンを設定して直接保存してください。");};
 $("s-cancel").onclick=resetS;
 
 function resetG(){$("form-g").reset();editG=null;$("g-save").textContent="写真情報を追加";$("g-cancel").hidden=true;}
 function renderG(){
-fillList("g-items",photos,(box,x,i)=>itemRow(box,x.title,(x.src||"")+(x.date?" ・ "+display(x.date):""),x.description,i,index=>{const v=photos[index];$("g-src").value=v.src||"";$("g-title").value=v.title||"";$("g-date").value=inputDate(v.date);$("g-desc").value=v.description||"";editG=index;$("g-save").textContent="変更を保存";$("g-cancel").hidden=false;$("form-g").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("写真情報を削除しますか？写真ファイル自体はGitHubから別途削除してください。")){photos.splice(index,1);resetG();renderG();say("写真情報を削除しました。GitHubへの保存も行ってください。");}}));
+fillList("g-items",photos,(box,x,i)=>itemRow(box,x.title,(x.src||"")+(x.date?" ・ "+display(x.date):""),x.description,i,index=>{const v=photos[index];$("g-src").value=v.src||"";$("g-title").value=v.title||"";$("g-date").value=inputDate(v.date);$("g-desc").value=v.description||"";editG=index;$("g-save").textContent="変更を保存";$("g-cancel").hidden=false;$("form-g").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("写真情報を削除しますか？写真ファイル自体はGitHubから別途削除してください。")){photos.splice(index,1);resetG();renderG();if(tokenValue()) publishDirect("gallery"); else say("写真情報を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
-$("form-g").onsubmit=e=>{e.preventDefault();const item={src:$("g-src").value.trim(),title:$("g-title").value.trim(),date:$("g-date").value?dot($("g-date").value):"",description:$("g-desc").value.trim()};if(!item.src||!item.title){say("ファイルパスと写真タイトルを入力してください。");return;}if(editG===null)photos.push(item);else photos[editG]=item;resetG();renderG();say("写真情報を管理画面に反映しました。画像ファイルもGitHubに追加されているか確認してください。");};
+$("form-g").onsubmit=e=>{e.preventDefault();const item={src:$("g-src").value.trim(),title:$("g-title").value.trim(),date:$("g-date").value?dot($("g-date").value):"",description:$("g-desc").value.trim()};if(!item.src||!item.title){say("ファイルパスと写真タイトルを入力してください。");return;}if(editG===null)photos.push(item);else photos[editG]=item;resetG();renderG();if(tokenValue()) publishDirect("gallery"); else say("写真情報を編集しました。公開サイトに反映するにはGitHubトークンを設定して直接保存してください。写真ファイルもGitHubに追加されているか確認してください。");};
 $("g-cancel").onclick=resetG;
 
 document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{document.querySelectorAll(".tab").forEach(t=>{t.classList.toggle("active",t===tab);t.setAttribute("aria-selected",String(t===tab));});["news","schedule","gallery"].forEach(name=>{$("panel-"+name).hidden=name!==tab.dataset.tab;});say("");});
