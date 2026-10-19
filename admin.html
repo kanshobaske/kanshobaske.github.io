@@ -62,14 +62,15 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 </section>
 
 <section class="panel" id="panel-schedule" role="tabpanel" hidden>
-<h2>大会予定を編集</h2><p>ホームの予定表と大会予定ページは同じデータを利用します。</p>
+<h2>大会予定・試合結果を編集</h2><p>大会名、開催日、対戦相手、試合結果などを編集できます。会場など、分からない項目は空欄のままで構いません。</p>
 <form id="form-s" class="form">
 <div class="field"><label for="s-date">開催日 *</label><input id="s-date" type="date" required></div>
 <div class="field"><label for="s-type">種別 *</label><select id="s-type"><option value="official-game">公式戦</option><option value="practice-game">練習試合</option></select></div>
 <div class="field"><label for="s-badge">表示ラベル *</label><input id="s-badge" required value="公式戦" placeholder="例：県大会"></div>
 <div class="field"><label for="s-title">大会・予定名 *</label><input id="s-title" maxlength="150" required placeholder="例：新人大会"></div>
-<div class="field"><label for="s-opponent">対戦相手</label><input id="s-opponent" maxlength="150" placeholder="例：〇〇高校／未定"></div>
-<div class="field"><label for="s-time">時間</label><input id="s-time" maxlength="100" placeholder="例：10:00 TIP OFF"></div>
+<div class="field"><label for="s-opponent">対戦相手</label><input id="s-opponent" maxlength="150" placeholder="例：九州文化学園"></div>
+<div class="field"><label for="s-result">試合結果（任意）</label><input id="s-result" maxlength="180" placeholder="例：諫早商 69-79 九州文化学園"></div>
+<div class="field"><label for="s-time">時間</label><input id="s-time" maxlength="100" placeholder="例：11:30"></div>
 <div class="field full"><label for="s-place">会場</label><input id="s-place" maxlength="180" placeholder="例：諫早市中央体育館"></div>
 <div class="field full"><label for="s-comment">コメント・補足</label><textarea id="s-comment" maxlength="1200" placeholder="組み合わせや応援へのお知らせなど"></textarea></div>
 <div class="field full"><div class="actions"><button class="btn" id="s-save" type="submit">予定を追加</button><button class="btn alt" id="s-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
@@ -130,10 +131,10 @@ $("n-cancel").onclick=resetN;
 function resetS(){$("form-s").reset();$("s-type").value="official-game";$("s-badge").value="公式戦";editS=null;$("s-save").textContent="予定を追加";$("s-cancel").hidden=true;}
 $("s-type").onchange=()=>{if(editS===null)$("s-badge").value=$("s-type").value==="official-game"?"公式戦":"練習試合";};
 function renderS(){
-fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("予定を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
+fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.result?"試合結果："+x.result:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-result").value=v.result||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("予定を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
-$("form-s").onsubmit=e=>{e.preventDefault();const raw=$("s-date").value,d=new Date(raw+"T12:00:00");if(!raw||Number.isNaN(d.getTime())){say("開催日を入力してください。");return;}const item={date:(d.getMonth()+1)+"/"+d.getDate(),fullDate:dot(raw),dayOfWeek:["日","月","火","水","木","金","土"][d.getDay()],badgeType:$("s-type").value,badgeName:$("s-badge").value.trim(),title:$("s-title").value.trim(),opponent:$("s-opponent").value.trim()||"未定",time:$("s-time").value.trim(),place:$("s-place").value.trim(),comment:$("s-comment").value.trim()};if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}if(editS===null)schedules.push(item);else schedules[editS]=item;schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("大会予定を編集しました。公開サイトに反映するには、GitHubトークンを設定して直接保存してください。");};
+$("form-s").onsubmit=e=>{e.preventDefault();const raw=$("s-date").value,d=new Date(raw+"T12:00:00");if(!raw||Number.isNaN(d.getTime())){say("開催日を入力してください。");return;}const item={date:(d.getMonth()+1)+"/"+d.getDate(),fullDate:dot(raw),dayOfWeek:["日","月","火","水","木","金","土"][d.getDay()],badgeType:$("s-type").value,badgeName:$("s-badge").value.trim(),title:$("s-title").value.trim(),opponent:$("s-opponent").value.trim()||"未定",result:$("s-result").value.trim(),time:$("s-time").value.trim(),place:$("s-place").value.trim(),comment:$("s-comment").value.trim()};if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}if(editS===null)schedules.push(item);else schedules[editS]=item;schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("大会予定を編集しました。公開サイトに反映するには、GitHubトークンを設定して直接保存してください。");};
 $("s-cancel").onclick=resetS;
 
 function resetG(){$("form-g").reset();editG=null;$("g-save").textContent="写真情報を追加";$("g-cancel").hidden=true;}
