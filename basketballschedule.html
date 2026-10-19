@@ -38,7 +38,7 @@
     display: none !important;
 }
 
-/* 今日（開いた日）の丸マーク用スタイル */
+/* 今日の日付を示す赤丸。JavaScript側で、その日に登録された予定がある場合だけ .is-today を付けます。 */
 .calendar-table td.is-today .day-num {
     position: relative;
     display: inline-block;
@@ -64,6 +64,9 @@
 
 <body>
 
+<!-- ページ構成：ヘッダー、試合一覧、月別カレンダーの順で表示します。 -->
+
+<!-- 共通ヘッダー：ロゴを押すとホームへ戻ります。 -->
 <header>
 <a href="index.html" class="logo-link" aria-label="ホームへ戻る">
   <div class="logo">
@@ -80,6 +83,7 @@
 </nav>
 </header>
 
+<!-- 大会・試合の一覧と、日付を確認するカレンダー本体です。 -->
 <main>
 <section class="schedule-section">
 <div class="container">
@@ -122,9 +126,13 @@
 <p>&copy; 2026 諫早商業高校 男子バスケットボール部</p>
 </footer>
 
+<script>/* schedule-data.js は大会日程と試合結果の元データです。 */</script>
 <script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
+// ページのHTMLが読み込まれてから、予定一覧・絞り込み・カレンダーを初期化します。
 document.addEventListener("DOMContentLoaded", function () {
+    // allEvents：カレンダーに表示する予定日と予定名を保存します。
+    // currentFilter：一覧・カレンダーに表示する種別（すべて／公式戦／練習試合）です。
     const allEvents = {};
     let currentFilter = "all";
     const scheduleList = document.getElementById("schedule-list");
@@ -191,8 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         scheduleList.textContent = "大会予定を読み込めませんでした。";
     }
 
-    // カレンダー表示に必要な絞り込み関数と日付を初期化します。
-    // 前回の編集で抜けていたため、ここで定義してエラーを防ぎます。
+    // 選択中の種別に合わせ、カレンダーへ渡す予定だけを取り出します。
     function getFilteredEvents() {
         if (currentFilter === "all") return allEvents;
         const filtered = {};
@@ -250,6 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 単一の月テーブルのHTMLを生成する関数
+    // 1か月分のカレンダーをHTML文字列に変換します。予定のない日には赤丸や試合名を付けません。
     function createCalendarHTML(year, month) {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
@@ -285,8 +293,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     const dStr = String(dayCount).padStart(2, '0');
                     fullDateStr = `${year}-${mStr}-${dStr}`;
                     
-                    // 今日（開いた日）の判定
-                    if (year === tYear && month === tMonth && printDay === tDate) {
+                    // 今日の日付でも、予定が登録されていなければ赤丸を表示しません。
+                    // allEvents はカレンダーの絞り込みに関係なく、全ての予定日を保持しています。
+                    if (
+                        year === tYear &&
+                        month === tMonth &&
+                        printDay === tDate &&
+                        allEvents[fullDateStr]
+                    ) {
                         cellClass += " is-today";
                     }
                     
@@ -307,6 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return html;
     }
 
+    // 表示月と、その前後の月のカレンダーをセットします。
     function setupSlider(baseDate) {
         const year = baseDate.getFullYear();
         const month = baseDate.getMonth();
@@ -326,6 +341,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const track = document.getElementById("calendar-track");
     let isTransitioning = false;
 
+    // 「先月」ボタン：アニメーションの後に表示月を1か月戻します。
     document.getElementById("prev-btn").addEventListener("click", function() {
         if (isTransitioning) return;
         isTransitioning = true;
@@ -342,6 +358,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 400);
     });
 
+    // 「次月」ボタン：アニメーションの後に表示月を1か月進めます。
     document.getElementById("next-btn").addEventListener("click", function() {
         if (isTransitioning) return;
         isTransitioning = true;
@@ -358,6 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 400);
     });
 
+    // 表示領域に入ったカードを表示状態にして、スクロール時のアニメーションを行います。
     const targets = document.querySelectorAll(".schedule-card, .calendar-section");
 
     // IntersectionObserverが使えない環境でも、予定が透明なまま隠れないようにします。
