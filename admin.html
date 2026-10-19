@@ -61,9 +61,6 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 <div class="field full"><label for="n-desc">本文 *</label><textarea id="n-desc" maxlength="1200" required placeholder="大会結果や活動の様子などを入力"></textarea></div>
 <div class="field full"><div class="actions"><button class="btn" id="n-save" type="submit">ニュースを追加</button><button class="btn alt" id="n-cancel" type="button" hidden>編集をキャンセル</button></div></div></form>
 <h3>登録済みニュース</h3><div class="items" id="n-items"></div>
-<h3>大会予定から自動作成されるお知らせ</h3>
-<p class="help">今後の大会予定は、登録した日程データをもとにホームとニュース一覧へ自動表示します。内容を変更する場合は「大会予定」タブで編集してください。</p>
-<div class="items" id="n-schedule-items"></div>
 <div class="output-head"><h3>更新用データ</h3><div class="actions"><button class="btn" data-copy="news">ニュースデータをコピー</button><button class="btn" type="button" data-publish="news">GitHubに直接保存</button><a class="btn alt" href="https://github.com/kanshobaske/kanshobaske.github.io/edit/main/news-data.js" target="_blank" rel="noopener">GitHubで編集</a></div></div>
 <textarea class="output" id="n-output" readonly aria-label="ニュースの更新用コード"></textarea><p class="help">GitHubの編集画面でコード全体を置き換えてください。</p>
 </section>
@@ -138,34 +135,9 @@ const box=$(id);box.replaceChildren();if(!arr.length){box.append(node("p","empty
 // ニュースフォームを初期状態に戻し、新規追加モードにします。
 function resetN(){ $("form-news").reset();$("n-category").value="お知らせ";editN=null;$("n-save").textContent="ニュースを追加";$("n-cancel").hidden=true;}
 // ニュースを登録一覧に反映し、保存用データも更新します。
-// 未来の日程（試合結果がまだないもの）から自動お知らせのプレビューを作ります。
-// この一覧は読み取り専用です。日程や対戦相手は「大会予定」タブで編集します。
-function renderUpcomingScheduleNotices(){
-const box=$("n-schedule-items");
-if(!box)return;
-box.replaceChildren();
-const today=new Date();today.setHours(0,0,0,0);
-const upcoming=schedules.filter(item=>{
-const start=inputDate(item.fullDate),end=inputDate(item.endDate||item.fullDate);
-if(!start||!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||item.result)return false;
-const endDate=new Date(end+"T00:00:00");
-return !Number.isNaN(endDate.getTime())&&endDate>=today;
-}).sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));
-if(!upcoming.length){box.append(node("p","empty","現在、ニュースとして自動表示する今後の大会予定はありません。"));return;}
-upcoming.forEach(item=>{
-const row=node("div","item"),body=node("div","item-body");
-body.append(node("strong","",item.title+"（自動お知らせ）"));
-body.append(node("small","",display(item.fullDate)+(item.endDate?"〜"+display(item.endDate):"")+" ・ "+(item.badgeName||"大会予定")));
-const detail=[item.opponent&&item.opponent!=="未定"?"対戦相手："+item.opponent:"対戦相手：未定",item.time?"時間："+item.time:"開始時刻：発表後に更新",item.place?"会場："+item.place:"会場：発表後に更新",item.comment||""].filter(Boolean).join("\n");
-body.append(node("p","",detail));
-row.append(body);box.append(row);
-});
-}
 function renderN(){
 fillList("n-items",news,(box,x,i)=>itemRow(box,x.title,display(x.date)+" ・ "+(x.category||"お知らせ"),x.desc,i,index=>{const v=news[index];$("n-date").value=inputDate(v.date);$("n-category").value=v.category||"お知らせ";$("n-title").value=v.title;$("n-desc").value=v.desc;editN=index;$("n-save").textContent="変更を保存";$("n-cancel").hidden=false;$("form-news").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("このニュースを削除しますか？")){news.splice(index,1);resetN();renderN();if(tokenValue()) publishDirect("news"); else say("ニュースを管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
-// 大会予定から自動生成するお知らせのプレビューも同時に更新します。
-renderUpcomingScheduleNotices();
 }
 $("form-news").onsubmit=e=>{e.preventDefault();const item={date:dot($("n-date").value),category:$("n-category").value,title:$("n-title").value.trim(),desc:$("n-desc").value.trim()};if(!item.date||!item.title||!item.desc){say("日付・タイトル・本文を入力してください。");return;}if(editN===null)news.push(item);else news[editN]=item;news.sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date)));resetN();renderN();if(tokenValue()) publishDirect("news"); else say("ニュースを編集しました。公開サイトに反映するには、GitHubトークンを設定して直接保存してください。");};
 $("n-cancel").onclick=resetN;
@@ -178,8 +150,6 @@ $("s-type").onchange=()=>{if(editS===null)$("s-badge").value=$("s-type").value==
 function renderS(){
 fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+(x.endDate?"〜"+display(x.endDate):"")+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.result?"試合結果："+x.result:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-end-date").value=inputDate(v.endDate||"");$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-result").value=v.result||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("予定を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
-// 日程を編集・削除したら、自動お知らせのプレビューも同期します。
-renderUpcomingScheduleNotices();
 }
 // 入力された予定を日付形式に統一し、終了日がある場合は開始日より前にならないよう確認します。
 $("form-s").onsubmit=e=>{
