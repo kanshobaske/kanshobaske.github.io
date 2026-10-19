@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const detail = document.createElement("div");
             detail.className = "schedule-detail";
             const dl = document.createElement("dl");
-            [["対戦相手", item.opponent || "未定"], ["時間", item.time || ""], ["会場", item.place || ""]].forEach(function (pair) {
+            [["対戦相手", item.opponent || ""], ["試合結果", item.result || ""], ["時間", item.time || ""], ["会場", item.place || ""]].forEach(function (pair) {
                 if (!pair[1]) return;
                 dl.appendChild(makeTextElement("dt", "", pair[0]));
                 dl.appendChild(makeTextElement("dd", "", pair[1]));
