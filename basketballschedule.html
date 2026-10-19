@@ -65,10 +65,12 @@
 <body>
 
 <header>
-<div class="logo">
-<span class="school-name">諫早商業高等学校</span>
-<span class="club-name">男子バスケットボール部</span>
-</div>
+<a href="index.html" class="logo-link" aria-label="ホームへ戻る">
+  <div class="logo">
+    <span class="school-name">諫早商業高等学校</span>
+    <span class="club-name">男子バスケットボール部</span>
+  </div>
+</a>
 <nav>
 <a href="index.html">HOME</a>
 <a href="news.html">ニュース</a>
@@ -357,23 +359,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const targets = document.querySelectorAll(".schedule-card, .calendar-section");
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("is-show");
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        root: null,
-        rootMargin: "0px 0px -10% 0px",
-        threshold: 0
-    });
 
-    targets.forEach((target, index) => {
-        target.style.transitionDelay = `${index * 0.25}s`;
-        observer.observe(target);
-    });
+    // IntersectionObserverが使えない環境でも、予定が透明なまま隠れないようにします。
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-show");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: "0px 0px -10% 0px",
+            threshold: 0
+        });
+
+        targets.forEach((target, index) => {
+            target.style.transitionDelay = `${index * 0.25}s`;
+            observer.observe(target);
+        });
+    } else {
+        targets.forEach((target) => target.classList.add("is-show"));
+    }
 });
 </script>
 
