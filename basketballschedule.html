@@ -167,12 +167,23 @@ document.addEventListener("DOMContentLoaded", function () {
             header.className = "card-header";
             const dateLabel = document.createElement("span");
             dateLabel.className = "schedule-date";
+            // 開始日と終了日を使い、複数日大会は日付の範囲で表示します。
             const dateObject = new Date(normalizedDate + "T12:00:00");
-            dateLabel.appendChild(document.createTextNode(
-                dateObject.getFullYear() + "年" + (dateObject.getMonth() + 1) + "月" + dateObject.getDate() + "日 "
-            ));
+            const endNormalizedDate = String(item.endDate || "").replace(/\./g, "-");
+            const endDateObject = /^\d{4}-\d{2}-\d{2}$/.test(endNormalizedDate)
+                ? new Date(endNormalizedDate + "T12:00:00")
+                : null;
+            let dateText = dateObject.getFullYear() + "年" + (dateObject.getMonth() + 1) + "月" + dateObject.getDate() + "日";
+            if (endDateObject && endDateObject >= dateObject) {
+                const endText = endDateObject.getFullYear() === dateObject.getFullYear()
+                    ? (endDateObject.getMonth() + 1) + "月" + endDateObject.getDate() + "日"
+                    : endDateObject.getFullYear() + "年" + (endDateObject.getMonth() + 1) + "月" + endDateObject.getDate() + "日";
+                dateText += "〜" + endText;
+            }
+            dateLabel.appendChild(document.createTextNode(dateText + " "));
             const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
-            dateLabel.appendChild(makeTextElement("span", "", "（" + (item.dayOfWeek || weekdays[dateObject.getDay()]) + "）"));
+            const weekdayText = item.dayOfWeek || weekdays[dateObject.getDay()];
+            dateLabel.appendChild(makeTextElement("span", "", "（" + weekdayText + "）"));
             const badge = makeTextElement("span", "badge " + (isOfficial ? "official-game" : "practice-game"), item.badgeName || (isOfficial ? "公式戦" : "練習試合"));
             header.append(dateLabel, badge);
             card.appendChild(header);
@@ -190,7 +201,21 @@ document.addEventListener("DOMContentLoaded", function () {
             if (item.comment) detail.appendChild(makeTextElement("p", "schedule-comment", item.comment));
             card.appendChild(detail);
             scheduleList.appendChild(card);
-            allEvents[normalizedDate] = { type: type, name: title };
+            // カレンダーの予定ボタンを押したときに、このカードへ移動できるように開始日を保存します。
+            allEvents[normalizedDate] = { type: type, name: title, gotoDate: normalizedDate };
+
+            // 終了日が指定されている大会は、その期間内の日付すべてにカレンダーの印を表示します。
+            if (endDateObject && endDateObject > dateObject) {
+                const rangeDate = new Date(dateObject);
+                rangeDate.setDate(rangeDate.getDate() + 1);
+                while (rangeDate <= endDateObject) {
+                    const rangeKey = rangeDate.getFullYear() + "-" +
+                        String(rangeDate.getMonth() + 1).padStart(2, "0") + "-" +
+                        String(rangeDate.getDate()).padStart(2, "0");
+                    allEvents[rangeKey] = { type: type, name: title, gotoDate: normalizedDate };
+                    rangeDate.setDate(rangeDate.getDate() + 1);
+                }
+            }
         });
         if (!scheduleList.children.length) {
             scheduleList.appendChild(makeTextElement("p", "", "登録されている大会予定はありません。"));
@@ -311,7 +336,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 if (fullDateStr && activeEvents[fullDateStr]) {
                     const ev = activeEvents[fullDateStr];
-                    html += `<div class="event-wrapper"><button class="event-dot ${ev.type}" data-goto="${fullDateStr}">${escapeCalendarText(ev.name)}</button></div>`;
+                    // 複数日大会の場合、どの日のボタンからでも開始日の予定カードへ移動します。
+                    html += `<div class="event-wrapper"><button class="event-dot ${ev.type}" data-goto="${ev.gotoDate || fullDateStr}">${escapeCalendarText(ev.name)}</button></div>`;
                 }
                 html += "</td>";
             }
