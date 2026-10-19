@@ -1,3 +1,5 @@
+/* style.css に追加する、ニュースと写真ページ専用のスタイルです。 */
+
 /* ニュース・大会写真ページの追加スタイル（既存デザインに合わせた配色） */
 .news-intro {
   max-width: 800px;
@@ -17,6 +19,7 @@
 .inline-link { color: rgb(255, 101, 101); font-weight: 700; text-decoration: none; }
 .inline-link:hover { text-decoration: underline; }
 
+/* ニュースの分類ラベル・本文・空データ表示に関するスタイル */
 .news-category {
   display: inline-block;
   width: fit-content;
@@ -48,6 +51,7 @@
 }
 .loading-message { color: #777; text-align: center; padding: 18px; }
 
+/* 大会写真一覧の説明文、写真カード、グリッド配置のスタイル */
 .gallery-intro {
   max-width: 900px;
   margin: -24px auto 28px;
@@ -96,6 +100,7 @@
 .schedule-inline-badge.official { color: rgb(255, 101, 101); }
 .schedule-inline-badge.practice { color: #4aa3ff; }
 
+/* 画面幅に応じて写真カードの列数と余白を調整します。 */
 @media (max-width: 800px) {
   .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 }
