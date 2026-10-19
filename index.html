@@ -83,67 +83,11 @@
   </div>
 </section>
 
-<!-- ニュースの元データを読み込み、ホーム用カードを生成します。 -->
+<!-- お知らせは news-data.js、今後の試合予定は schedule-data.js を共通データとして使います。 -->
 <script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
-<script>
-/* ニュース表示の予備処理：外部スクリプトが読み込めない場合でも、ニュース本文を表示します。 */
-(function () {
-  "use strict";
-  var home = document.getElementById("top-news-list");
-  var list = document.getElementById("news-container");
-  var data = (typeof newsData !== "undefined" && Array.isArray(newsData)) ? newsData.slice() : [];
+<script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
+<script src="news-renderer.js?v=20261019"></script>
 
-  function clear(node) {
-    while (node && node.firstChild) node.removeChild(node.firstChild);
-  }
-  function add(parent, tag, className, value) {
-    var node = document.createElement(tag);
-    if (className) node.className = className;
-    node.textContent = value == null ? "" : String(value);
-    parent.appendChild(node);
-    return node;
-  }
-  function dateNumber(value) {
-    var normalized = String(value || "").replace(/\./g, "-");
-    var stamp = new Date(normalized + "T00:00:00").getTime();
-    return isNaN(stamp) ? 0 : stamp;
-  }
-  data.sort(function (a, b) { return dateNumber(b.date) - dateNumber(a.date); });
-
-  if (!data.length) {
-    if (home) { clear(home); add(home, "p", "news-empty", "ニュースを読み込めませんでした。時間をおいて再読み込みしてください。"); }
-    if (list) { clear(list); add(list, "li", "news-empty", "ニュースを読み込めませんでした。時間をおいて再読み込みしてください。"); }
-    return;
-  }
-
-  if (home) {
-    clear(home);
-    data.slice(0, 3).forEach(function (item) {
-      var card = add(home, "article", "card", "");
-      add(card, "span", "news-date", item.date || "");
-      var body = add(card, "div", "card-content", "");
-      add(body, "span", "news-category", item.category || "お知らせ");
-      add(body, "h3", "", item.title || "（タイトル未設定）");
-      add(body, "p", "", item.desc || "本文は準備中です。");
-    });
-  }
-
-  if (list) {
-    clear(list);
-    data.forEach(function (item) {
-      var entry = add(list, "li", "", "");
-      /* CSSのアニメーションに失敗した場合も、記事が透明なままにならないようにします。 */
-      entry.style.opacity = "1";
-      entry.style.transform = "none";
-      entry.style.animation = "none";
-      add(entry, "div", "news-date", item.date || "");
-      add(entry, "span", "news-category", item.category || "お知らせ");
-      add(entry, "h3", "news-list-title", item.title || "（タイトル未設定）");
-      add(entry, "p", "news-description", item.desc || "本文は準備中です。");
-    });
-  }
-})();
-</script>
 <!-- 写真の元データを読み込み、gallery-renderer.js で表示します。 -->
 <script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script src="gallery-renderer.js"></script>
@@ -175,8 +119,7 @@
     <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
 </section>
 
-<!-- 大会予定の元データを読み込みます。予定の日付やスコアは schedule-data.js を編集します。 -->
-<script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
+<!-- schedule-data.js は上部で読み込み済みです。 -->
 <script>
   // ホームの簡易予定表を作ります。日付が不正な項目は表示対象から除外します。
   // 今後の予定のみを表示し、データに問題があってもページ全体が停止しないようにします。
