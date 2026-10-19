@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="news-gallery.css">
 </head>
 <body>
+
+<!-- 大会写真ページ：gallery-data.js に登録した写真と説明文を一覧表示します。 -->
+  <!-- 共通ヘッダー：ロゴ・各ページへの移動リンクです。 -->
   <header>
     <a href="index.html" class="logo-link" aria-label="ホームへ戻る">
       <div class="logo">
@@ -33,6 +36,7 @@
       <h1 class="section-title" id="gallery-heading">PHOTO GALLERY</h1>
       <p class="sub-title">大会・練習の記録</p>
       <p class="gallery-intro">大会や練習試合での様子を写真で紹介します。新しい写真を追加すると、この一覧に表示されます。</p>
+      <!-- 写真カードは gallery-renderer.js が動的に作成します。 -->
       <div class="gallery-grid" id="gallery-list" aria-live="polite">
         <p class="loading-message">写真を読み込んでいます…</p>
       </div>
@@ -46,6 +50,7 @@
     <p>© 2026 諫早商業高校バスケットボール部</p>
   </footer>
 
+  <!-- 写真データを読み込み、共通表示スクリプトに渡します。 -->
   <script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
   <script src="gallery-renderer.js"></script>
 </body>
