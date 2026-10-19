@@ -28,10 +28,12 @@
 <body>
 
   <header>
-    <div class="logo">
-      <span class="school-name">諫早商業高等学校</span>
-      <span class="club-name">男子バスケットボール部</span>
-    </div>
+    <a href="index.html" class="logo-link" aria-label="ホームへ戻る">
+      <div class="logo">
+        <span class="school-name">諫早商業高等学校</span>
+        <span class="club-name">男子バスケットボール部</span>
+      </div>
+    </a>
     
     <nav>
       <a href="index.html">HOME</a>
@@ -189,9 +191,9 @@
     today.setHours(0, 0, 0, 0);
     const upcoming = scheduleData.filter(function (item) {
       const normalized = String(item.fullDate || "").replace(/\./g, "-");
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return true;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return false;
       const eventDate = new Date(normalized + "T00:00:00");
-      return Number.isNaN(eventDate.getTime()) || eventDate >= today;
+      return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
     });
 
     if (upcoming.length === 0) {
