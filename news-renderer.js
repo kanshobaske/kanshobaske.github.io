@@ -5,6 +5,7 @@
 (function () {
   "use strict";
 
+  // 元データをコピーして日付の新しい順に並べます。元の newsData 配列自体は変更しません。
   const items = (typeof newsData !== "undefined" && Array.isArray(newsData))
     ? newsData.slice().sort(function (a, b) {
         function toTime(value) {
@@ -16,6 +17,7 @@
       })
     : [];
 
+  // HTML要素を作成し、テキストとして内容を追加する共通関数です。
   function addTextElement(parent, tagName, className, text) {
     const element = document.createElement(tagName);
     if (className) element.className = className;
@@ -24,6 +26,7 @@
     return element;
   }
 
+  // 記事がないときに空欄ではなくメッセージを表示します。
   function renderEmpty(container, isList) {
     container.replaceChildren();
     const empty = document.createElement(isList ? "li" : "p");
@@ -32,6 +35,7 @@
     container.appendChild(empty);
   }
 
+  // ホーム用：新しい記事から最大3件だけ表示します。
   function renderHome(container) {
     container.replaceChildren();
     const latestItems = items.slice(0, 3);
@@ -55,6 +59,7 @@
     });
   }
 
+  // ニュースページ用：登録されている記事を全件表示します。
   function renderNewsList(container) {
     container.replaceChildren();
     if (items.length === 0) {
@@ -72,6 +77,7 @@
     });
   }
 
+  // 表示先の要素があるページだけ描画し、ホームとニュース一覧の両方で同じ処理を使います。
   const homeContainer = document.getElementById("top-news-list");
   const newsListContainer = document.getElementById("news-container");
   if (homeContainer) renderHome(homeContainer);
