@@ -27,6 +27,9 @@
 </head>
 <body>
 
+<!-- ホーム：新着ニュース、大会写真、今後の予定、学校へのアクセスをまとめています。 -->
+
+  <!-- 共通ヘッダー：サイト名のロゴと各ページへのリンクです。 -->
   <header>
     <a href="index.html" class="logo-link" aria-label="ホームへ戻る">
       <div class="logo">
@@ -45,6 +48,7 @@
     </nav>
   </header>
 
+<!-- メインビジュアル：部活動名とチームロゴを表示します。 -->
 <section class="hero">
     <div class="hero-content">
       <h1><img src="img/kenshu.png" alt="堅守速攻" class="hero-logo"></h1>
@@ -54,6 +58,7 @@
     </div>
 </section>
 
+<!-- 新着ニュース：news-data.js の最新3件を表示します。 -->
 <section aria-labelledby="news-heading">
   <h2 class="section-title" id="news-heading">NEWS</h2>
   <p class="sub-title">新着情報</p>
@@ -65,6 +70,7 @@
   </div>
 </section>
 
+<!-- 写真プレビュー：gallery-data.js の先頭3件を表示します。 -->
 <section aria-labelledby="gallery-heading" id="photo-gallery-preview">
   <h2 class="section-title" id="gallery-heading">PHOTO GALLERY</h2>
   <p class="sub-title">大会・練習の記録</p>
@@ -77,6 +83,7 @@
   </div>
 </section>
 
+<!-- ニュースの元データを読み込み、ホーム用カードを生成します。 -->
 <script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 /* ニュース表示の予備処理：外部スクリプトが読み込めない場合でも、ニュース本文を表示します。 */
@@ -137,10 +144,12 @@
   }
 })();
 </script>
+<!-- 写真の元データを読み込み、gallery-renderer.js で表示します。 -->
 <script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script src="gallery-renderer.js"></script>
 
 
+<!-- 大会予定：schedule-data.js から今日以降の予定を表に表示します。 -->
 <section>
     <h2 class="section-title">SCHEDULE</h2>
     <p class="sub-title">今後の予定</p>
@@ -166,8 +175,10 @@
     <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
 </section>
 
+<!-- 大会予定の元データを読み込みます。予定の日付やスコアは schedule-data.js を編集します。 -->
 <script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
+  // ホームの簡易予定表を作ります。日付が不正な項目は表示対象から除外します。
   // 今後の予定のみを表示し、データに問題があってもページ全体が停止しないようにします。
   (function () {
     const tableBody = document.getElementById("top-schedule-list");
@@ -220,6 +231,7 @@
   })();
 </script>
 
+<!-- アクセス：学校の住所・電話番号と地図を表示します。 -->
 <section id="access">
     <h2 class="section-title">ACCESS</h2>
     <p class="sub-title">アクセス</p>
