@@ -1,39 +1,30 @@
-// 大会予定データ
+// 大会予定・試合結果データ
+// 日付、対戦相手、スコアなど必要な情報のみを登録しています。
 const scheduleData = [
   {
-    "date": "5/30",
-    "fullDate": "2026.05.30",
+    "date": "4/18",
+    "fullDate": "2026.04.18",
     "dayOfWeek": "土",
     "badgeType": "official-game",
     "badgeName": "公式戦",
-    "title": "インターハイ予選",
-    "opponent": "△△高校",
-    "time": "10:00 TIP OFF",
-    "place": "メインアリーナ",
-    "comment": "初戦突破に向けて全力で挑みます！応援よろしくお願いします！"
+    "title": "長崎県高校バスケットボール春季選手権大会（2回戦）",
+    "opponent": "大村",
+    "result": "大村 143-29 諫早商",
+    "time": "16:00",
+    "place": "",
+    "comment": ""
   },
   {
-    "date": "6/02",
-    "fullDate": "2026.06.02",
-    "dayOfWeek": "火",
-    "badgeType": "practice-game",
-    "badgeName": "練習試合",
-    "title": "練習試合",
-    "opponent": "〇〇学院",
-    "time": "13:00〜",
-    "place": "〇〇学院体育館",
-    "comment": "県大会前の大事な実戦形式の調整です。"
-  },
-  {
-    "date": "6/10",
-    "fullDate": "2026.06.10",
-    "dayOfWeek": "水",
+    "date": "10/10",
+    "fullDate": "2026.10.10",
+    "dayOfWeek": "土",
     "badgeType": "official-game",
-    "badgeName": "県大会",
-    "title": "県大会",
-    "opponent": "未定",
-    "time": "終日",
-    "place": "県立総合体育館",
-    "comment": "組み合わせが決まり次第、詳細を更新します。"
+    "badgeName": "公式戦",
+    "title": "ウィンターカップ長崎県予選（1回戦）",
+    "opponent": "九州文化学園",
+    "result": "諫早商 69-79 九州文化学園",
+    "time": "11:30",
+    "place": "",
+    "comment": ""
   }
 ];
