@@ -14,6 +14,9 @@
 </head>
 <body>
 
+<!-- ニュース一覧：投稿ルールの説明と、登録済み記事を全件表示します。 -->
+
+  <!-- 共通ヘッダー：ロゴからホームへ戻れます。 -->
   <header>
     <a href="index.html" class="logo-link" aria-label="ホームへ戻る">
       <div class="logo">
@@ -31,6 +34,7 @@
     </nav>
   </header>
 
+  <!-- ページ本文：掲載するニュースの種類と、ニュース一覧です。 -->
   <section class="news-page-content" aria-labelledby="news-heading">
     <h1 class="section-title" id="news-heading">NEWS</h1>
     <p class="sub-title">部活動のお知らせ・活動報告</p>
@@ -48,6 +52,7 @@
       <p><a href="gallery.html" class="inline-link">大会写真を見る ＞</a>　<a href="basketballschedule.html" class="inline-link">大会予定を見る ＞</a></p>
     </div>
 
+    <!-- ニュース本文は news-data.js の title / desc などから生成します。 -->
     <ul class="news-list" id="news-container" aria-live="polite">
       <li class="loading-message">ニュースを読み込んでいます…</li>
     </ul>
@@ -56,10 +61,12 @@
     </div>
   </section>
 
+  <!-- ページ共通のフッターです。 -->
   <footer>
     <p>© 2026 諫早商業高校バスケットボール部</p>
   </footer>
 
+  <!-- 共通ニュースデータを読み込んで、このページの一覧へ表示します。 -->
   <script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 /* ニュース表示の予備処理：外部スクリプトが読み込めない場合でも、ニュース本文を表示します。 */
