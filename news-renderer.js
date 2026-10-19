@@ -36,27 +36,33 @@
     return text;
   }
 
-  // 試合結果がまだなく、開催期間の終了日が今日以降の予定だけを自動お知らせにします。
+  // 大会予定に登録済みの試合だけを対象にし、開催3日前から当日までお知らせを表示します。
+  // 新しい大会予定を勝手に追加せず、schedule-data.js の内容をそのまま利用します。
   function makeUpcomingScheduleNews() {
     if (typeof scheduleData === "undefined" || !Array.isArray(scheduleData)) return [];
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const publishedDate = formatDate(today);
+    const noticeLeadDays = 3;
 
     return scheduleData.filter(function (item) {
-      // スコアが入っている項目は試合終了済みのため、予定のお知らせを作りません。
+      // 結果が登録済みの試合は、予定のお知らせの対象外です。
       if (String(item.result || "").trim()) return false;
+
       const start = parseDate(item.fullDate);
       const end = parseDate(item.endDate || item.fullDate);
-      return Boolean(start && end && end >= today);
+      if (!start || !end) return false;
+
+      // 大会開始日の3日前から当日までに限り、お知らせを表示します。
+      const noticeStart = new Date(start);
+      noticeStart.setDate(noticeStart.getDate() - noticeLeadDays);
+      return today >= noticeStart && today <= end;
     }).map(function (item) {
       const start = parseDate(item.fullDate);
       const end = parseDate(item.endDate || item.fullDate);
       const dateText = formatScheduleRange(item, start, end);
-      const detailText = item.comment ||
-        "対戦相手・開始時刻・会場などの詳細は、組み合わせ発表後に更新します。";
       const knownDetails = [];
+
       if (item.opponent && item.opponent !== "未定" && item.opponent !== "組み合わせ発表後に更新") {
         knownDetails.push("対戦相手：" + item.opponent);
       }
@@ -64,12 +70,13 @@
       if (item.place) knownDetails.push("会場：" + item.place);
 
       return {
-        date: publishedDate,
-        category: "大会予定・結果",
-        title: "試合予定のお知らせ：" + (item.title || "大会予定"),
+        // お知らせの日付は、実際に表示される当日の日付です。
+        date: formatDate(today),
+        category: "大会予定",
+        title: "【大会予定】" + (item.title || "大会") + "が近づいています",
         desc: "開催予定：" + dateText + "。" +
           (knownDetails.length ? knownDetails.join("、") + "。" : "") +
-          detailText + " 詳細は「大会予定」ページをご確認ください。"
+          (item.comment || "詳しい日程は大会予定ページをご確認ください。")
       };
     });
   }
