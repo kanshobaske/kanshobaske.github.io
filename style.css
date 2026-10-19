@@ -80,6 +80,19 @@ header{
     line-height: 1.2;
 }
 
+/* ヘッダーのロゴをホームへのリンクとして表示します（既存の見た目は維持）。 */
+.logo-link {
+    display: block;
+    flex-shrink: 0;
+    color: inherit;
+    text-decoration: none;
+}
+.logo-link:focus-visible {
+    outline: 3px solid rgb(255, 101, 101);
+    outline-offset: 5px;
+    border-radius: 3px;
+}
+
 .school-name {
     display: block;
     font-size: 14px;
@@ -215,10 +228,10 @@ nav a:hover,
 }
 
 .news-list li {
-    border-left: 5px solid rgb(255, 101, 101);
     background: #ffffff;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     border: 1px solid #eaeaea;
+    border-left: 5px solid rgb(255, 101, 101);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 0 10px 10px 0;
