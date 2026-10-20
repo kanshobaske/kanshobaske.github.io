@@ -23,13 +23,25 @@ main{max-width:1050px;margin:auto;padding:28px 18px 65px}.lead{max-width:850px;m
 .actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 20px}.btn.alt{background:white;color:#d95050}.btn.dark{background:#666;border-color:#666}
 .items{display:grid;gap:10px;margin:15px 0 24px}.item{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border:1px solid #eaeaea;border-radius:7px;padding:13px}.item-body{flex:1;min-width:0;overflow-wrap:anywhere}.item-body strong{display:block}.item-body small{display:block;color:#777;margin:4px 0}.item-body p{white-space:pre-wrap;color:#444;margin:4px 0}.item-actions{display:flex;gap:6px;flex-wrap:wrap}.small{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid #ddd;background:#fff;color:#444;border-radius:5px;padding:6px 10px}.empty,.help{color:#666;font-size:.92rem}.empty{text-align:center;border:1px dashed #ddd;border-radius:8px;padding:18px}
 .output-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:25px}.output{display:block;width:100%;min-height:160px;margin-top:10px;border:1px solid #ddd;border-radius:6px;background:#fafafa;padding:12px;font:13px/1.5 Consolas,monospace;white-space:pre;overflow:auto}.status{min-height:1.5em;color:#267547;font-weight:700}.back{text-align:center;margin-top:30px}
+#admin-lock{max-width:650px;margin:40px auto;padding:26px;border:1px solid #e5e5e5;border-top:5px solid #ff6565;border-radius:10px;background:#fff;box-shadow:0 6px 22px #0000000a}#admin-lock h1{font-size:1.45rem;margin:0 0 10px}#admin-lock p{color:#555}#admin-login-form{display:grid;gap:10px;margin-top:18px}#admin-login-form input{width:100%;font:inherit;border:1px solid #d7d7d7;border-radius:6px;padding:11px 12px}#admin-login-status{min-height:1.5em;margin-top:12px;font-weight:700;color:#444}#admin-main[hidden]{display:none!important}
 @media(max-width:640px){main{padding:22px 12px 50px}.panel{padding:16px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.item{flex-direction:column}.item-actions{width:100%}}
 </style>
 </head>
 <body>
 <header><div class="logo"><span class="school-name">諫早商業高等学校</span><span class="club-name">男子バスケットボール部</span></div>
 <nav><a href="index.html">HOME</a><a href="news.html">ニュース</a><a href="basketballschedule.html">大会予定</a><a href="gallery.html">大会写真</a></nav></header>
-<main>
+<section id="admin-lock" aria-labelledby="admin-lock-title">
+<h1 id="admin-lock-title">管理者ログイン</h1>
+<p>管理画面を開くには、このサイトのGitHubリポジトリに書き込み権限があるアカウントのFine-grained personal access tokenが必要です。</p>
+<p class="help">トークンはこのページを開いている間だけ使用し、ブラウザやサイトのファイルには保存しません。Contents権限をRead and writeに設定してください。</p>
+<form id="admin-login-form">
+<label for="admin-login-token"><strong>GitHubアクセストークン</strong></label>
+<input id="admin-login-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required placeholder="github_pat_…">
+<button type="submit" class="btn" id="admin-login-button">権限を確認して管理画面を開く</button>
+</form>
+<p id="admin-login-status" role="status" aria-live="polite"></p>
+</section>
+<main id="admin-main" hidden>
 <h1 class="section-title">SITE MANAGER</h1><p class="sub-title">ニュース・大会予定・写真の編集</p>
 <p class="lead">フォームに入力して項目を追加・編集・削除できます。HTMLやJavaScriptを直接書き換える必要はありません。</p>
 <!-- 保存設定：GitHubへ直接保存する場合に限り、トークンをここで一時入力します。 -->
@@ -232,6 +244,43 @@ async function githubApi(path,options){
  }
  return data;
 }
+// 管理画面は、GitHub APIで本人とリポジトリ書き込み権限を確認するまで表示しません。
+$("admin-login-form").addEventListener("submit",async function(event){
+ event.preventDefault();
+ const token=$("admin-login-token").value.trim();
+ const button=$("admin-login-button"),loginStatus=$("admin-login-status");
+ if(!token){loginStatus.textContent="GitHubアクセストークンを入力してください。";return;}
+ button.disabled=true;
+ loginStatus.textContent="GitHubアカウントとリポジトリの権限を確認しています…";
+ const headers={
+  "Accept":"application/vnd.github+json",
+  "Authorization":"Bearer "+token,
+  "X-GitHub-Api-Version":"2022-11-28"
+ };
+ try{
+  const userResponse=await fetch("https://api.github.com/user",{headers:headers});
+  if(!userResponse.ok) throw new Error("認証に失敗しました。トークンが正しいか、有効期限が切れていないか確認してください。");
+  const user=await userResponse.json();
+  const repoResponse=await fetch("https://api.github.com/repos/kanshobaske/kanshobaske.github.io",{headers:headers});
+  if(!repoResponse.ok) throw new Error("リポジトリを確認できません。トークンの対象リポジトリとMetadataの読み取り権限を確認してください。");
+  const repositoryInfo=await repoResponse.json();
+  const permissions=repositoryInfo.permissions||{};
+  if(!(permissions.push===true||permissions.admin===true||permissions.maintain===true)){
+   throw new Error("このGitHubアカウントには管理画面を使うための書き込み権限がありません。リポジトリ管理者に確認してください。");
+  }
+  // 権限確認済みのトークンを既存の保存機能に引き継ぎ、入力欄からは消します。
+  $("github-token").value=token;
+  $("admin-login-token").value="";
+  $("admin-lock").hidden=true;
+  $("admin-main").hidden=false;
+  $("github-token-status").textContent="GitHubアカウント @"+user.login+" のリポジトリ書き込み権限を確認しました。トークンはこのページ内でのみ使用されます。";
+  say("管理者として認証しました。編集後はGitHubへの直接保存を利用できます。");
+ }catch(error){
+  loginStatus.textContent=error.message||"認証を確認できませんでした。";
+ }finally{
+  button.disabled=false;
+ }
+});
 $("test-github-token").addEventListener("click",async function(){
  const button=this;
  button.disabled=true;
