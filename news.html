@@ -67,9 +67,8 @@
   </footer>
 
   <!-- news-data.js に手動登録された記事だけを共通スクリプトで表示します。 -->
+<script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
+<script src="news-renderer.js?v=20261020"></script>
 
-
-
-<script src="script-loader.js" data-files="news-data.js,news-renderer.js"></script>
 </body>
 </html>
