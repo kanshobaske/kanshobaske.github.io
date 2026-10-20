@@ -117,7 +117,7 @@ function output(name,items,comment){return "// "+comment+"\nconst "+name+" = "+J
 // コピー欄と直接保存欄を最新の入力データに更新します。
 function refreshOutputs(){
 $("n-output").value=output("newsData",news.slice().sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date))),"ニュースデータ");
-$("s-output").value=output("scheduleData",schedules.slice().sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate))),"大会予定データ");
+$("s-output").value=output("scheduleData",schedules.slice().sort((a,b)=>inputDate(b.fullDate).localeCompare(inputDate(a.fullDate))),"大会予定データ");
 $("g-output").value=output("galleryData",photos,"大会写真データ");
 }
 // 登録済みの1件を一覧表示し、編集・削除ボタンを付けます。
@@ -136,6 +136,7 @@ const box=$(id);box.replaceChildren();if(!arr.length){box.append(node("p","empty
 function resetN(){ $("form-news").reset();$("n-category").value="お知らせ";editN=null;$("n-save").textContent="ニュースを追加";$("n-cancel").hidden=true;}
 // ニュースを登録一覧に反映し、保存用データも更新します。
 function renderN(){
+news.sort((a,b)=>inputDate(b.date).localeCompare(inputDate(a.date)));
 fillList("n-items",news,(box,x,i)=>itemRow(box,x.title,display(x.date)+" ・ "+(x.category||"お知らせ"),x.desc,i,index=>{const v=news[index];$("n-date").value=inputDate(v.date);$("n-category").value=v.category||"お知らせ";$("n-title").value=v.title;$("n-desc").value=v.desc;editN=index;$("n-save").textContent="変更を保存";$("n-cancel").hidden=false;$("form-news").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("このニュースを削除しますか？")){news.splice(index,1);resetN();renderN();if(tokenValue()) publishDirect("news"); else say("ニュースを管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
@@ -148,6 +149,7 @@ function resetS(){$("form-s").reset();$("s-type").value="official-game";$("s-bad
 $("s-type").onchange=()=>{if(editS===null)$("s-badge").value=$("s-type").value==="official-game"?"公式戦":"練習試合";};
 // 大会予定一覧に対戦相手・スコアなどを表示し、編集ボタンへ値を戻します。
 function renderS(){
+schedules.sort((a,b)=>inputDate(b.fullDate).localeCompare(inputDate(a.fullDate)));
 fillList("s-items",schedules,(box,x,i)=>itemRow(box,x.title,display(x.fullDate)+(x.endDate?"〜"+display(x.endDate):"")+" ・ "+(x.badgeName||"予定")+(x.time?" ・ "+x.time:""),[x.opponent?"対戦相手："+x.opponent:"",x.result?"試合結果："+x.result:"",x.place?"会場："+x.place:"",x.comment||""].filter(Boolean).join("\n"),i,index=>{const v=schedules[index];$("s-date").value=inputDate(v.fullDate);$("s-end-date").value=inputDate(v.endDate||"");$("s-type").value=v.badgeType||"official-game";$("s-badge").value=v.badgeName||"";$("s-title").value=v.title||"";$("s-opponent").value=v.opponent||"";$("s-result").value=v.result||"";$("s-time").value=v.time||"";$("s-place").value=v.place||"";$("s-comment").value=v.comment||"";editS=index;$("s-save").textContent="変更を保存";$("s-cancel").hidden=false;$("form-s").scrollIntoView({behavior:"smooth"});},index=>{if(confirm("この予定を削除しますか？")){schedules.splice(index,1);resetS();renderS();if(tokenValue()) publishDirect("schedule"); else say("予定を管理画面から削除しました。公開サイトにも反映するには、GitHubトークンを設定して直接保存してください。");}}));
 refreshOutputs();
 }
@@ -169,7 +171,7 @@ place:$("s-place").value.trim(),comment:$("s-comment").value.trim()
 };
 if(!item.badgeName||!item.title){say("表示ラベルと大会・予定名を入力してください。");return;}
 if(editS===null)schedules.push(item);else schedules[editS]=item;
-schedules.sort((a,b)=>inputDate(a.fullDate).localeCompare(inputDate(b.fullDate)));
+schedules.sort((a,b)=>inputDate(b.fullDate).localeCompare(inputDate(a.fullDate)));
 resetS();renderS();
 if(tokenValue())publishDirect("schedule");
 else say("大会予定を編集しました。公開サイトへ反映するには、更新用データをGitHubに保存してください。");
