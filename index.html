@@ -24,6 +24,7 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="news-gallery.css">
+  <link rel="stylesheet" href="home-page.css">
 </head>
 <body>
 
@@ -84,13 +85,13 @@
 </section>
 
 <!-- ニュースは news-data.js の固定記事、ホームの予定表は schedule-data.js を使います。 -->
-<script>document.write('<script src="news-data.js?v=' + Date.now() + '"><\/script>');</script>
-<script>document.write('<script src="schedule-data.js?v=' + Date.now() + '"><\/script>');</script>
-<script src="news-renderer.js?v=20261020"></script>
+
+
+
 
 <!-- 写真の元データを読み込み、gallery-renderer.js で表示します。 -->
-<script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
-<script src="gallery-renderer.js"></script>
+
+
 
 
 <!-- 大会予定：schedule-data.js から今日以降の予定を表に表示します。 -->
@@ -120,61 +121,7 @@
 </section>
 
 <!-- schedule-data.js は上部で読み込み済みです。 -->
-<script>
-  // ホームの簡易予定表を作ります。日付が不正な項目は表示対象から除外します。
-  // 今後の予定のみを表示し、データに問題があってもページ全体が停止しないようにします。
-  (function () {
-    const tableBody = document.getElementById("top-schedule-list");
-    if (!tableBody) return;
 
-    function showMessage(message) {
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
-      cell.colSpan = 3;
-      cell.textContent = message;
-      row.appendChild(cell);
-      tableBody.appendChild(row);
-    }
-
-    if (typeof scheduleData === "undefined" || !Array.isArray(scheduleData)) {
-      showMessage("予定を読み込めませんでした。時間をおいて再度ご確認ください。");
-      return;
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const upcoming = scheduleData.filter(function (item) {
-      const normalized = String(item.fullDate || "").replace(/\./g, "-");
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return false;
-      const eventDate = new Date(normalized + "T00:00:00");
-      return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
-    }).sort(function (a, b) {
-      return String(b.fullDate || "").localeCompare(String(a.fullDate || ""));
-    });
-
-    if (upcoming.length === 0) {
-      showMessage("現在、掲載中の今後の予定はありません。");
-      return;
-    }
-
-    upcoming.forEach(function (item) {
-      const row = document.createElement("tr");
-      const dateCell = document.createElement("td");
-      const titleCell = document.createElement("td");
-      const opponentCell = document.createElement("td");
-      const badge = document.createElement("span");
-
-      dateCell.textContent = [item.date, item.dayOfWeek ? "(" + item.dayOfWeek + ")" : ""].filter(Boolean).join(" ");
-      badge.className = "schedule-inline-badge " + (item.badgeType === "official-game" ? "official" : "practice");
-      badge.textContent = "[" + (item.badgeName || "予定") + "]";
-      titleCell.appendChild(badge);
-      titleCell.appendChild(document.createTextNode(" " + (item.title || "詳細未定")));
-      opponentCell.textContent = item.opponent || "未定";
-      row.append(dateCell, titleCell, opponentCell);
-      tableBody.appendChild(row);
-    });
-  })();
-</script>
 
 <!-- アクセス：学校の住所・電話番号と地図を表示します。 -->
 <section id="access">
@@ -189,7 +136,7 @@
     </div>
 
     <div class="map-wrap">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1675.9515657034412!2d130.0395649679837!3d32.84781639469504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3540033435775e51%3A0xff0b2122ed82999e!2z6ZW35bSO55yM56uL6Kur5pep5ZWG5qWt6auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1784007157458!5m2!1sja!2sjp" width="1000" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <iframe class="access-map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1675.9515657034412!2d130.0395649679837!3d32.84781639469504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3540033435775e51%3A0xff0b2122ed82999e!2z6ZW35bSO55yM56uL6Kur5pep5ZWG5qWt6auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1784007157458!5m2!1sja!2sjp" width="1000" height="600" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
 </section>
 
@@ -197,5 +144,6 @@
     <p>© 2026 諫早商業高校バスケットボール部</p>
 </footer>
 
+<script src="script-loader.js" data-files="news-data.js,schedule-data.js,news-renderer.js,gallery-data.js,gallery-renderer.js,home-page.js"></script>
 </body>
 </html>
