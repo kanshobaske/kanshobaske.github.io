@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (typeof scheduleData !== "undefined" && Array.isArray(scheduleData)) {
         scheduleList.replaceChildren();
         scheduleData.slice().sort(function (a, b) {
-            return String(a.fullDate || "").localeCompare(String(b.fullDate || ""));
+            return String(b.fullDate || "").localeCompare(String(a.fullDate || ""));
         }).forEach(function (item) {
             const normalizedDate = String(item.fullDate || "").replace(/\./g, "-");
             if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) return;
