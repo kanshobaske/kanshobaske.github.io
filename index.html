@@ -148,6 +148,8 @@
       if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return false;
       const eventDate = new Date(normalized + "T00:00:00");
       return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
+    }).sort(function (a, b) {
+      return String(b.fullDate || "").localeCompare(String(a.fullDate || ""));
     });
 
     if (upcoming.length === 0) {
