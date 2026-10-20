@@ -51,8 +51,7 @@
   </footer>
 
   <!-- 写真データを読み込み、共通表示スクリプトに渡します。 -->
-  
-  
-<script src="script-loader.js" data-files="gallery-data.js,gallery-renderer.js"></script>
+  <script>document.write('<script src="gallery-data.js?v=' + Date.now() + '"><\/script>');</script>
+  <script src="gallery-renderer.js"></script>
 </body>
 </html>
